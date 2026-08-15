@@ -1,0 +1,117 @@
+{
+  "danh_muc_loai_giay_to": [
+    {
+      "ma": "QDTUYENDUNG",
+      "mo_ta": "Quyết định tuyển dụng lao động thử việc VÀ các quyết định tiếp theo trong cùng chuỗi tuyển dụng, thường có 1 trang"
+    },
+    {
+      "ma": "THONGBAOLUONG",
+      "mo_ta": "Thông báo lương / thông báo kết quả xếp lương, tăng lương"
+    },
+    {
+      "ma": "SOYEULYLICH",
+      "mo_ta": "Sơ yếu lý lịch do cán bộ tự khai và có xác nhận của cơ quan nhà nước có thẩm quyền, có ít nhất 2 trang, (thường có dán ảnh 4x6, tiêu đề 'SƠ YẾU LÝ LỊCH')"
+    },
+    {
+      "ma": "GIAYKHAISINH",
+      "mo_ta": "Bản sao Giấy khai sinh có chứng thực của cơ quan có thẩm quyền, có ít nhất 2 trang, (mẫu của UBND xã/phường, tiêu đề 'GIẤY KHAI SINH')"
+    },
+    {
+      "ma": "CCCD",
+      "mo_ta": "Bản sao Căn cước công dân/Căn cước có chứng thực của cơ quan có thẩm quyền (ảnh thẻ CCCD có mã QR, quốc huy, dòng chữ 'CĂN CƯỚC CÔNG DÂN' hoặc 'CĂN CƯỚC')"
+    },
+    {
+      "ma": "CMND",
+      "mo_ta": "Bản sao Chứng minh nhân dân (mẫu CMND cũ, 9 hoặc 12 số) có chứng thực của cơ quan có thẩm quyền"
+    },
+    {
+      "ma": "BANGDAIHOC",
+      "mo_ta": "Bằng đại học / bằng cử nhân, có ít nhất 2 trang (văn bằng tốt nghiệp, có quốc huy, tên trường, ngành học, xếp loại)"
+    },
+    {
+      "ma": "BANGDIEMDH",
+      "mo_ta": "Bảng điểm đại học, có ít nhất 3 trang, (bảng liệt kê 'STT | Mã HP/Unit code | Tên học phần/Unit title' kèm điểm số)"
+    },
+    {
+      "ma": "BANGTIENSI",
+      "mo_ta": "Bằng tiến sĩ"
+    },
+    {
+      "ma": "BANGTHACSI",
+      "mo_ta": "Bằng thạc sĩ"
+    },
+    {
+      "ma": "CHUNGCHIKHAC",
+      "mo_ta": "Chứng chỉ khác, bằng cấp khác không thuộc các mã trên, có ít nhất 2 trang, (vd: chứng chỉ ngoại ngữ/tin học, TOEIC, IELTS, chứng chỉ nghiệp vụ ngân hàng, chứng chỉ đào tạo ngắn hạn...)"
+    },
+    {
+      "ma": "GIAYKHAMSK",
+      "mo_ta": "Giấy khám sức khỏe, có ít nhất 3 trang, (mẫu của cơ sở y tế/bệnh viện, có các mục khám thể lực, khám lâm sàng, tiêu đề 'GIẤY KHÁM SỨC KHỎE')"
+    },
+    {
+      "ma": "CV",
+      "mo_ta": "thông tin ứng viên nộp khi ứng tuyển, có ít nhất 3 trang, (mẫu nội bộ 'THÔNG TIN ỨNG VIÊN', có dán ảnh, kỹ năng, quá trình công tác — khác với Sơ yếu lý lịch có xác nhận nhà nước)"
+    },
+    {
+      "ma": "QDCHAMDUT",
+      "mo_ta": "Quyết định chấm dứt HỢP ĐỒNG LAO ĐỘNG / chấm dứt quan hệ lao động, cho thôi việc, nghỉ việc HẲN (kết thúc quan hệ lao động với công ty). CHỈ dùng mã này khi văn bản thật sự chấm dứt việc làm; KHÔNG dùng cho quyết định kết thúc thời gian thử việc để ký HĐLĐ tiếp theo (loại đó thuộc QDTUYENDUNG, xem mô tả ở trên)."
+    },
+    {
+      "ma": "CAMKETBAOMAT",
+      "mo_ta": "Cam kết/Hợp đồng bảo mật thông tin (tiêu đề có thể là 'CAM KẾT BẢO MẬT THÔNG TIN' hoặc 'HỢP ĐỒNG BẢO MẬT THÔNG TIN')"
+    },
+    {
+      "ma": "CAMKETKHAC",
+      "mo_ta": "Bản cam kết khác không phải bảo mật thông tin (vd: cam kết thực hiện nội quy, cam kết thử thách công việc...)"
+    },
+    {
+      "ma": "HDTHUVIEC",
+      "mo_ta": "Hợp đồng thử việc (tiêu đề có cụm 'HỢP ĐỒNG THỬ VIỆC' hoặc 'HĐTV')"
+    },
+    {
+      "ma": "HDXDTH",
+      "mo_ta": "Hợp đồng lao động XÁC ĐỊNH THỜI HẠN (tiêu đề có cụm 'HỢP ĐỒNG LAO ĐỘNG' kèm 'XÁC ĐỊNH THỜI HẠN' hoặc mã hiệu 'HDLD.XDTH')"
+    },
+    {
+      "ma": "HDKXDTH",
+      "mo_ta": "Hợp đồng lao động KHÔNG XÁC ĐỊNH THỜI HẠN (tiêu đề có cụm 'KHÔNG XÁC ĐỊNH THỜI HẠN' hoặc mã hiệu 'HDLD.KXDTH')"
+    },
+    {
+      "ma": "PHULUCHD",
+      "mo_ta": "Phụ lục hợp đồng lao động (văn bản sửa đổi/bổ sung một số điều khoản của HĐLĐ đã ký, tiêu đề 'PHỤ LỤC HỢP ĐỒNG LAO ĐỘNG')"
+    },
+    {
+      "ma": "HDDAOTAO",
+      "mo_ta": "Hợp đồng đào tạo / cam kết đào tạo (ràng buộc nghĩa vụ làm việc sau khi được cử đi đào tạo)"
+    },
+    {
+      "ma": "QDDIEUDONG",
+      "mo_ta": "Quyết định điều động / Quyết định chuyển đổi vị trí, đơn vị công tác (không phải bổ nhiệm chức danh quản lý)"
+    },
+    {
+      "ma": "QDBONHIEM",
+      "mo_ta": "Quyết định bổ nhiệm chức danh quản lý / điều động kèm bổ nhiệm"
+    },
+    {
+      "ma": "QDTAMHOAN",
+      "mo_ta": "Quyết định tạm hoãn thực hiện hợp đồng lao động"
+    },
+    {
+      "ma": "QDDIEUCHINH",
+      "mo_ta": "Quyết định điều chỉnh cấp bậc, ngạch/bậc lương, chức danh công việc (không kèm đổi vị trí/đơn vị)"
+    },
+    {
+      "ma": "QDNGHIHUU",
+      "mo_ta": "Quyết định nghỉ hưu"
+    },
+    {
+      "ma": "QDKYLUAT",
+      "mo_ta": "Quyết định/biên bản xử lý kỷ luật lao động"
+    },
+    {
+      "ma": "KEKHAITS",
+      "mo_ta": "Bản kê khai tài sản, thu nhập"
+    }
+  ],
+  "quy_tac_phan_biet": "1. CV có tiêu đề là THÔNG TIN ỨNG VIÊN , có tối thiểu là 2 trang, có dán ảnh ở đầu trang.\n2. Phân biệt 3 loại hợp đồng lao động bằng đúng cụm từ trong tiêu đề:\n   \"THỬ VIỆC\" -> HDTHUVIEC; \"XÁC ĐỊNH THỜI HẠN\" -> HDXDTH;\n   \"KHÔNG XÁC ĐỊNH THỜI HẠN\" -> HDKXDTH. Văn bản chỉ sửa đổi/bổ sung một\n   vài điều khoản của hợp đồng đã ký (không phải hợp đồng mới) -> PHULUCHD.\n3. CCCD (thẻ căn cước có mã QR, quốc huy) khác CMND (chứng minh nhân dân\n   mẫu cũ) khác GIAYKHAISINH (giấy khai sinh do UBND cấp) khác SOYEULYLICH\n   (sơ yếu lý lịch có dán ảnh, do cán bộ tự khai) — đọc kỹ tiêu đề/loại\n   giấy tờ trên ảnh, không suy đoán theo vị trí xuất hiện.\n4. CAMKETBAOMAT dùng cho cả văn bản tiêu đề \"CAM KẾT BẢO MẬT THÔNG TIN\" lẫn\n   \"HỢP ĐỒNG BẢO MẬT THÔNG TIN\" (cùng nội dung bảo mật). CAMKETKHAC chỉ\n   dùng cho cam kết KHÔNG liên quan bảo mật thông tin.\n5. QDDIEUDONG (điều động/chuyển đổi vị trí) khác QDBONHIEM (bổ nhiệm chức\n   danh quản lý) khác QDDIEUCHINH (chỉ điều chỉnh cấp bậc/ngạch lương,\n   không đổi vị trí công tác)."
+}

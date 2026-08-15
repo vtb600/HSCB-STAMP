@@ -1,0 +1,14 @@
+python -m venv venv_hscb
+venv_hscb\Scripts\activate
+pip install --no-cache-dir pymupdf pypdf pyinstaller
+pyinstaller --noconfirm --onefile --windowed --name "HSCBshare" --icon=hscb.ico --clean HSCBshare.py
+
+pyinstaller HSCBv2.spec --noconfirm
+3FGo1kJ4B3tSF1AdvcyF8yazZhUisPO9
+
+python -m venv venv_stamp
+venv_stamp\Scripts\activate
+pip install --no-cache-dir pymupdf mistralai pydantic pyinstaller
+pyinstaller --noconfirm --onefile --windowed --name "STAMPv3" --icon=stamp.ico --add-data "stamp_pdf_mistral.py;." gui_stamp_pdf.py
+
+pyinstaller stamp.spec --noconfirm

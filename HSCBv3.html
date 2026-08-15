@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Tách hồ sơ PDF theo mã PL02 CV 7761 — VietinBank chi nhánh Bình Thuận</title>
+<style>
+  :root{
+    --vtb-blue-dark:#003C71;
+    --vtb-blue:#005B94;
+    --vtb-blue-light:#EAF2FA;
+    --vtb-red:#D31145;
+    --vtb-red-dark:#A50D37;
+    --vtb-bg:#F4F7FB;
+    --vtb-card:#FFFFFF;
+    --vtb-border:#D7E0EA;
+    --vtb-text:#1A2733;
+    --vtb-muted:#6B7A8D;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--vtb-bg);
+    color:var(--vtb-text);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    font-size:14px;
+  }
+  header{background:var(--vtb-blue-dark);padding:18px 24px 16px;}
+  header h1{margin:0;color:#fff;font-size:19px;font-weight:700;letter-spacing:.2px;}
+  header .sub{color:#CFE3F5;font-size:12.5px;margin-top:6px;}
+  header .sub a{color:#8FD3FF;text-decoration:none;}
+  header .sub a:hover{color:#fff;text-decoration:underline;}
+  header .note{color:#CFE3F5;font-size:12px;margin-top:6px;opacity:.9;}
+  .accent-bar{height:3px;background:var(--vtb-red);}
+  main{max-width:920px;margin:0 auto;padding:16px;}
+  .card{background:var(--vtb-card);border:1px solid var(--vtb-border);border-radius:8px;
+        padding:16px 18px;margin-bottom:16px;}
+  .card h2{margin:0 0 12px;font-size:13px;color:var(--vtb-blue-dark);
+           text-transform:uppercase;letter-spacing:.4px;font-weight:700;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media (max-width:600px){.grid2{grid-template-columns:1fr;}}
+  label{display:block;font-size:12.5px;font-weight:700;color:var(--vtb-blue-dark);margin-bottom:4px;}
+  input[type=text]{
+    width:100%;padding:8px 10px;border:1px solid var(--vtb-border);border-radius:5px;
+    font-size:13.5px;background:#fff;color:var(--vtb-text);
+  }
+  input[type=text]:focus{outline:none;border-color:var(--vtb-blue);box-shadow:0 0 0 2px rgba(0,91,148,.15);}
+  .filebox{
+    border:1.5px dashed var(--vtb-border);border-radius:6px;padding:16px;text-align:center;
+    background:var(--vtb-blue-light);cursor:pointer;transition:.15s;
+  }
+  .filebox:hover{border-color:var(--vtb-blue);}
+  .filebox.dragover{border-color:var(--vtb-red);background:#FDEFF2;}
+  .filebox .fname{margin-top:6px;font-weight:700;color:var(--vtb-blue-dark);font-size:13px;word-break:break-all;}
+  .filebox .hint{color:var(--vtb-muted);font-size:12px;}
+  input[type=file]{display:none;}
+  .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  button{
+    font-family:inherit;font-size:13.5px;font-weight:700;border:none;border-radius:6px;
+    padding:10px 18px;cursor:pointer;transition:.15s;
+  }
+  .btn-primary{background:var(--vtb-blue);color:#fff;}
+  .btn-primary:hover:not(:disabled){background:var(--vtb-blue-dark);}
+  .btn-primary:disabled{background:#9FB9CC;cursor:not-allowed;color:#EFEFEF;}
+  .btn-secondary{background:#E7EEF5;color:var(--vtb-blue-dark);}
+  .btn-secondary:hover:not(:disabled){background:#D6E3F0;}
+  .btn-secondary:disabled{background:#EFEFEF;color:var(--vtb-muted);cursor:not-allowed;}
+  .btn-danger{background:var(--vtb-red);color:#fff;}
+  .btn-danger:hover:not(:disabled){background:var(--vtb-red-dark);}
+  .status{font-size:12.5px;color:var(--vtb-muted);margin-top:10px;}
+  .status.warn{color:var(--vtb-red);font-weight:700;}
+  progress{width:100%;height:8px;margin-top:10px;accent-color:var(--vtb-red);}
+  .log{
+    background:#FBFCFE;border:1px solid var(--vtb-border);border-radius:6px;padding:10px 12px;
+    height:260px;overflow-y:auto;font-family:Consolas,"Courier New",monospace;font-size:12px;
+    white-space:pre-wrap;line-height:1.5;
+  }
+  .log .warn{color:var(--vtb-red);font-weight:700;}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:4px;}
+  th,td{border:1px solid var(--vtb-border);padding:6px 8px;text-align:left;}
+  th{background:var(--vtb-blue-light);color:var(--vtb-blue-dark);}
+  tr.review td{background:#FDEFF2;color:var(--vtb-red-dark);}
+  .badge{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:3px;}
+  .badge-ok{background:#E5F3EA;color:#1E8449;}
+  .badge-review{background:#FDEFF2;color:var(--vtb-red-dark);}
+  details summary{cursor:pointer;font-size:12.5px;color:var(--vtb-blue);font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📜 TÁCH HỒ SƠ PDF THEO MÃ PL02 CV 7761</h1>
+  <div class="sub">🌍 VIETINBANK CHI NHÁNH BÌNH THUẬN — <a href="https://vietinbank.cn600.website" target="_blank" rel="noopener">vietinbank.cn600.website</a></div>
+  <div class="note">⚡ Đọc thẳng nhãn PL02 đã đóng dấu sẵn (FreeText annotation) — chạy 100% ngay trong trình duyệt của bạn, file PDF không được tải lên bất kỳ máy chủ nào.</div>
+</header>
+<div class="accent-bar"></div>
+
+<main>
+
+  <div class="card">
+    <h2>Thông tin cán bộ</h2>
+    <div class="grid2">
+      <div>
+        <label for="maCanBo">Mã cán bộ</label>
+        <input type="text" id="maCanBo" placeholder="VD: NV01234" />
+      </div>
+      <div>
+        <label for="hoTen">Họ và tên</label>
+        <input type="text" id="hoTen" placeholder="VD: Nguyễn Văn A" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>File PDF cần tách (đã đóng dấu)</h2>
+    <div class="filebox" id="filebox">
+      <div id="fileboxLabel">📄 Bấm để chọn file, hoặc kéo-thả file PDF vào đây</div>
+      <div class="fname" id="fname"></div>
+      <div class="hint">Chỉ chấp nhận file .pdf đã được đóng dấu nhãn PL02 dạng FreeText annotation</div>
+    </div>
+    <input type="file" id="filePdf" accept="application/pdf" />
+
+    <details style="margin-top:12px;">
+      <summary>Tùy chọn: nạp danh mục mã PL02 tùy chỉnh (danh_muc_pl02.json)</summary>
+      <div style="margin-top:8px;">
+        <input type="file" id="fileDanhMuc" accept="application/json" style="display:inline-block;font-size:12.5px;" />
+        <div class="hint" style="margin-top:6px;">Nếu không nạp, ứng dụng dùng danh mục 30 mã mặc định (giống bộ đóng dấu).</div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2>Xử lý</h2>
+    <div class="row">
+      <button class="btn-primary" id="btnRun">▶ Tách file PDF</button>
+      <button class="btn-secondary" id="btnDownload" disabled>⬇ Tải kết quả (.zip)</button>
+    </div>
+    <div class="status" id="statusLine">✔ Sẵn sàng — chọn file PDF và nhập thông tin cán bộ để bắt đầu.</div>
+    <progress id="progressBar" value="0" max="100" style="display:none;"></progress>
+  </div>
+
+  <div class="card">
+    <h2>Nhật ký xử lý</h2>
+    <div class="log" id="logBox"></div>
+  </div>
+
+  <div class="card" id="resultCard" style="display:none;">
+    <h2>Kết quả tách file</h2>
+    <table id="resultTable">
+      <thead>
+        <tr>
+          <th>File</th><th>Trang</th><th>Mã loại</th><th>Tên đầy đủ</th><th>Nhãn đọc được</th><th>Khớp</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="resultBody"></tbody>
+    </table>
+  </div>
+
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script>
+"use strict";
+
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+
+/* ---------------------------------------------------------------------
+   DANH MỤC MẶC ĐỊNH 30 MÃ PL02 — cùng nguồn với bản Python/Tkinter.
+--------------------------------------------------------------------- */
+const DANH_MUC_MA_MAC_DINH = {
+  QDTUYENDUNG: "Quyết định tuyển dụng",
+  THONGBAOLUONG: "Thông báo lương",
+  SOYEULYLICH: "Sơ yếu lý lịch",
+  GIAYKHAISINH: "Giấy khai sinh",
+  CCCD: "Căn cước công dân",
+  CMND: "Chứng minh nhân dân",
+  HOCHIEU: "Hộ chiếu",
+  DINHDANH: "Định danh điện tử",
+  BANGDIEMDH: "Bảng điểm đại học",
+  BANGTIENSI: "Bằng tiến sĩ",
+  BANGTHACSI: "Bằng thạc sĩ",
+  BANGDAIHOC: "Bằng đại học",
+  CHUNGCHIKHAC: "Chứng chỉ khác",
+  GIAYKHAMSK: "Giấy khám sức khỏe",
+  CV: "Phiếu thông tin ứng viên (CV)",
+  QDCHAMDUT: "Quyết định chấm dứt",
+  CAMKETBAOMAT: "Cam kết bảo mật thông tin",
+  HDTHUVIEC: "Hợp đồng thử việc",
+  HDXDTH: "HĐLĐ xác định thời hạn",
+  HDKXDTH: "HĐLĐ không xác định thời hạn",
+  PHULUCHD: "Phụ lục hợp đồng",
+  HDDAOTAO: "Hợp đồng đào tạo",
+  QDBONHIEM: "Quyết định Bổ nhiệm/Điều động bổ nhiệm",
+  QDDIEUDONG: "Quyết định điều động",
+  QDCHUYENDOI: "Quyết định chuyển đổi công việc",
+  QDTAMHOAN: "Quyết định tạm hoãn HĐLĐ",
+  QDDIEUCHINH: "Quyết định điều chỉnh lương",
+  QDNGHIHUU: "Quyết định nghỉ hưu",
+  QDKYLUAT: "Kỷ luật",
+  KEKHAITS: "Kê khai tài sản",
+  KHAC: "Khác (không thuộc danh mục PL02 chuẩn)",
+};
+
+let DANH_MUC_MA = { ...DANH_MUC_MA_MAC_DINH };
+let MA_LIST = Object.keys(DANH_MUC_MA);
+
+const MATCH_ACCEPT_THRESHOLD = 0.35;
+const REVIEW_FLAG_THRESHOLD = 0.85;
+
+/* ---------------------------------------------------------------------
+   TIỆN ÍCH CHUỖI — tương đương chuan_hoa_khong_dau / so_khop_ma_pl02
+--------------------------------------------------------------------- */
+function chuanHoaKhongDau(text) {
+  if (!text) return "";
+  let t = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  t = t.replace(/Đ/g, "D").replace(/đ/g, "d");
+  return t.toUpperCase();
+}
+
+function tachPhanHauTo(text) {
+  const m = text.match(/^([A-Z]+)-?([0-9OIL]{0,3})$/);
+  if (m) return [m[1], m[2]];
+  return [text, ""];
+}
+
+// Levenshtein distance
+function levenshtein(a, b) {
+  const m = a.length, n = b.length;
+  if (m === 0) return n;
+  if (n === 0) return m;
+  const dp = new Array(n + 1);
+  for (let j = 0; j <= n; j++) dp[j] = j;
+  for (let i = 1; i <= m; i++) {
+    let prev = dp[0];
+    dp[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const tmp = dp[j];
+      dp[j] = Math.min(
+        dp[j] + 1,
+        dp[j - 1] + 1,
+        prev + (a[i - 1] === b[j - 1] ? 0 : 1)
+      );
+      prev = tmp;
+    }
+  }
+  return dp[n];
+}
+
+// Xấp xỉ difflib.SequenceMatcher.ratio() bằng tỉ lệ dựa trên Levenshtein
+function tyLeKhop(a, b) {
+  if (!a && !b) return 1;
+  const dist = levenshtein(a, b);
+  const maxLen = Math.max(a.length, b.length);
+  if (maxLen === 0) return 1;
+  return 1 - dist / maxLen;
+}
+
+function soKhopMaPl02(rawText) {
+  const raw = (rawText || "").toUpperCase().replace(/[^A-Z0-9-]/g, "");
+  if (!raw) return { ma: null, tyLe: 0, raw: "" };
+  let [phanChu] = tachPhanHauTo(raw);
+  if (!phanChu) phanChu = raw;
+
+  let best = null, bestScore = -1;
+  for (const ma of MA_LIST) {
+    const score = tyLeKhop(phanChu, ma);
+    if (score > bestScore) {
+      bestScore = score;
+      best = ma;
+    }
+  }
+  return { ma: best, tyLe: bestScore, raw };
+}
+
+/* ---------------------------------------------------------------------
+   ĐỌC NHÃN FREETEXT ANNOTATION TỪNG TRANG BẰNG PDF.JS
+--------------------------------------------------------------------- */
+async function docNhanTrang(pdfDoc, soTrang) {
+  const page = await pdfDoc.getPage(soTrang);
+  const annots = await page.getAnnotations({ intent: "display" });
+  for (const a of annots) {
+    if (a.subtype === "FreeText") {
+      const text = (a.contents || "").trim();
+      if (text) return text;
+    }
+  }
+  return null;
+}
+
+async function docThongTinNhan(pdfDoc, soTrang) {
+  const nhanGoc = await docNhanTrang(pdfDoc, soTrang);
+  if (nhanGoc === null) return null;
+  const { ma, tyLe, raw } = soKhopMaPl02(nhanGoc);
+  const maLoai = tyLe >= MATCH_ACCEPT_THRESHOLD && ma !== null ? ma : (raw || "KHAC");
+  return {
+    ma_loai: maLoai,
+    ty_le_khop: Math.round(tyLe * 100) / 100,
+    nhan_goc: nhanGoc,
+    can_kiem_tra: tyLe < REVIEW_FLAG_THRESHOLD,
+  };
+}
+
+function gomTrangThanhVanBan(pageInfos) {
+  const docs = [];
+  let current = null;
+  for (let i = 0; i < pageInfos.length; i++) {
+    let info = pageInfos[i];
+    if (info !== null || current === null) {
+      if (current !== null) docs.push(current);
+      if (info === null) {
+        info = { ma_loai: "KHAC", ty_le_khop: 0, nhan_goc: "", can_kiem_tra: true };
+      }
+      current = {
+        start: i, end: i,
+        ma_loai: info.ma_loai, ty_le_khop: info.ty_le_khop,
+        nhan_goc: info.nhan_goc, can_kiem_tra: info.can_kiem_tra,
+      };
+    } else {
+      current.end = i;
+    }
+  }
+  if (current !== null) docs.push(current);
+  return docs;
+}
+
+function datTenFileTheoPl02(documents, maCanBo, hoTenSlug) {
+  const demTheoLoai = {};
+  for (const d of documents) demTheoLoai[d.ma_loai] = (demTheoLoai[d.ma_loai] || 0) + 1;
+
+  const sttDangDung = {};
+  const tenFileList = [];
+  for (const d of documents) {
+    const maLoai = d.ma_loai;
+    const canThemStt = demTheoLoai[maLoai] >= 2;
+    let phanStt = "";
+    if (canThemStt) {
+      sttDangDung[maLoai] = (sttDangDung[maLoai] || 0) + 1;
+      phanStt = "-" + String(sttDangDung[maLoai]).padStart(2, "0");
+    }
+    tenFileList.push(`${maCanBo}-${hoTenSlug}-${maLoai}${phanStt}`);
+  }
+  return tenFileList;
+}
+
+function hoTenThanhSlug(hoTen) {
+  let slug = chuanHoaKhongDau(hoTen).replace(/ /g, "-");
+  slug = slug.replace(/[^A-Z0-9-]/g, "");
+  slug = slug.replace(/-{2,}/g, "-").replace(/^-|-$/g, "");
+  return slug;
+}
+
+/* ---------------------------------------------------------------------
+   GIAO DIỆN
+--------------------------------------------------------------------- */
+const $ = (id) => document.getElementById(id);
+const logBox = $("logBox");
+const statusLine = $("statusLine");
+const progressBar = $("progressBar");
+const btnRun = $("btnRun");
+const btnDownload = $("btnDownload");
+const resultCard = $("resultCard");
+const resultBody = $("resultBody");
+
+let selectedFile = null;
+let zipBlob = null;
+let zipFileName = "ket_qua_tach.zip";
+
+function log(line, warn) {
+  const div = document.createElement("div");
+  if (warn) div.className = "warn";
+  div.textContent = line;
+  logBox.appendChild(div);
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+function clearLog() {
+  logBox.innerHTML = "";
+}
+
+function setStatus(text, warn) {
+  statusLine.textContent = text;
+  statusLine.className = "status" + (warn ? " warn" : "");
+}
+
+// Chọn / kéo-thả file PDF
+const filebox = $("filebox");
+const filePdfInput = $("filePdf");
+filebox.addEventListener("click", () => filePdfInput.click());
+filebox.addEventListener("dragover", (e) => { e.preventDefault(); filebox.classList.add("dragover"); });
+filebox.addEventListener("dragleave", () => filebox.classList.remove("dragover"));
+filebox.addEventListener("drop", (e) => {
+  e.preventDefault();
+  filebox.classList.remove("dragover");
+  if (e.dataTransfer.files.length) setFile(e.dataTransfer.files[0]);
+});
+filePdfInput.addEventListener("change", (e) => {
+  if (e.target.files.length) setFile(e.target.files[0]);
+});
+
+function setFile(file) {
+  if (file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+    setStatus("⚠ Vui lòng chọn đúng file .pdf", true);
+    return;
+  }
+  selectedFile = file;
+  $("fname").textContent = "📎 " + file.name;
+  setStatus("✔ Đã chọn file: " + file.name);
+}
+
+// Nạp danh mục tùy chỉnh
+$("fileDanhMuc").addEventListener("change", async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try {
+    const text = await f.text();
+    const data = JSON.parse(text);
+    const list = (data.danh_muc_loai_giay_to || [])
+      .filter((it) => it.ma && it.ma.trim())
+      .map((it) => [it.ma.trim(), (it.mo_ta || "").trim()]);
+    if (!list.length) throw new Error("File JSON không có danh_muc_loai_giay_to hợp lệ");
+    const moi = {};
+    for (const [ma, moTa] of list) moi[ma] = DANH_MUC_MA_MAC_DINH[ma] || moTa;
+    if (!moi.KHAC) moi.KHAC = DANH_MUC_MA_MAC_DINH.KHAC;
+    DANH_MUC_MA = moi;
+    MA_LIST = Object.keys(DANH_MUC_MA);
+    setStatus(`✔ Đã nạp danh mục tùy chỉnh (${MA_LIST.length} mã)`);
+  } catch (err) {
+    setStatus("⚠ Lỗi đọc file danh mục: " + err.message, true);
+    DANH_MUC_MA = { ...DANH_MUC_MA_MAC_DINH };
+    MA_LIST = Object.keys(DANH_MUC_MA);
+  }
+});
+
+// ------------------------------------------------------------------
+// XỬ LÝ CHÍNH
+// ------------------------------------------------------------------
+btnRun.addEventListener("click", async () => {
+  const maCanBo = $("maCanBo").value.trim();
+  const hoTen = $("hoTen").value.trim();
+
+  if (!maCanBo || !hoTen) {
+    setStatus("⚠ Vui lòng nhập Mã cán bộ và Họ và tên.", true);
+    return;
+  }
+  if (!selectedFile) {
+    setStatus("⚠ Vui lòng chọn file PDF hợp lệ.", true);
+    return;
+  }
+
+  btnRun.disabled = true;
+  btnDownload.disabled = true;
+  resultCard.style.display = "none";
+  resultBody.innerHTML = "";
+  clearLog();
+  progressBar.style.display = "block";
+  progressBar.value = 0;
+  setStatus("⏳ Đang xử lý...");
+
+  try {
+    const hoTenSlug = hoTenThanhSlug(hoTen);
+    const originalBytes = new Uint8Array(await selectedFile.arrayBuffer());
+
+    // Bản sao riêng cho pdf.js (đọc nhãn) và pdf-lib (tách trang)
+    const bytesForRead = originalBytes.slice();
+    const bytesForSplit = originalBytes.slice();
+
+    const pdfDoc = await pdfjsLib.getDocument({ data: bytesForRead }).promise;
+    const nPages = pdfDoc.numPages;
+    log(`Tổng số trang: ${nPages}`);
+
+    const pageInfos = [];
+    for (let i = 1; i <= nPages; i++) {
+      const info = await docThongTinNhan(pdfDoc, i);
+      if (info === null) {
+        log(`  Trang ${i}/${nPages}: không có nhãn -> nối tiếp văn bản trước`);
+      } else {
+        const canhBao = info.can_kiem_tra ? "  [CẦN KIỂM TRA]" : "";
+        log(
+          `  Trang ${i}/${nPages}: nhãn='${info.nhan_goc}' -> mã=${info.ma_loai} (khớp ${info.ty_le_khop})${canhBao}`,
+          info.can_kiem_tra
+        );
+      }
+      pageInfos.push(info);
+      progressBar.value = Math.round((i / nPages) * 70);
+    }
+
+    const documents = gomTrangThanhVanBan(pageInfos);
+    log(`\nPhát hiện ${documents.length} văn bản riêng biệt.\n`);
+
+    const tenFileList = datTenFileTheoPl02(documents, maCanBo, hoTenSlug);
+
+    const srcForSplit = await PDFLib.PDFDocument.load(bytesForSplit);
+    const zip = new JSZip();
+    const usedNames = new Set();
+    const logRows = [];
+
+    for (let idx = 0; idx < documents.length; idx++) {
+      const d = documents[idx];
+      const tenGoc = tenFileList[idx];
+
+      const outDoc = await PDFLib.PDFDocument.create();
+      const pageIndices = [];
+      for (let p = d.start; p <= d.end; p++) pageIndices.push(p);
+      const copiedPages = await outDoc.copyPages(srcForSplit, pageIndices);
+      copiedPages.forEach((pg) => outDoc.addPage(pg));
+      const outBytes = await outDoc.save();
+
+      let name = tenGoc;
+      let n = 1;
+      while (usedNames.has(name)) {
+        n += 1;
+        name = `${tenGoc}_dup${n}`;
+      }
+      usedNames.add(name);
+
+      zip.file(`${name}.pdf`, outBytes);
+
+      const soTrang = d.end - d.start + 1;
+      log(`  -> ${name}.pdf  (trang ${d.start + 1}-${d.end + 1}, ${soTrang} trang)`);
+
+      logRows.push({
+        file: `${name}.pdf`,
+        trang_bat_dau: d.start + 1,
+        trang_ket_thuc: d.end + 1,
+        so_trang: soTrang,
+        ma_loai_giay_to: d.ma_loai,
+        ten_day_du_loai: DANH_MUC_MA[d.ma_loai] || "",
+        nhan_da_doc: d.nhan_goc,
+        ty_le_khop: d.ty_le_khop,
+        can_kiem_tra: d.can_kiem_tra ? "CO" : "",
+      });
+
+      progressBar.value = 70 + Math.round(((idx + 1) / documents.length) * 25);
+    }
+
+    // File log CSV (UTF-8 BOM để Excel mở đúng tiếng Việt)
+    const headers = ["file","trang_bat_dau","trang_ket_thuc","so_trang","ma_loai_giay_to","ten_day_du_loai","nhan_da_doc","ty_le_khop","can_kiem_tra"];
+    const csvLines = [headers.join(",")];
+    for (const row of logRows) {
+      csvLines.push(headers.map((h) => csvEscape(row[h])).join(","));
+    }
+    const csvContent = "\uFEFF" + csvLines.join("\r\n");
+    zip.file("_log_tach_file.csv", csvContent);
+
+    log(`\nXong. File log kiểm tra: _log_tach_file.csv (trong file .zip)`);
+    log("*** QUAN TRỌNG: hãy mở file log (cột 'can_kiem_tra' = CO) và các", true);
+    log("PDF vừa tách để kiểm tra lại trước khi dùng chính thức.", true);
+
+    zipBlob = await zip.generateAsync({ type: "blob" });
+    zipFileName = `${maCanBo}-${hoTenSlug || "ket-qua"}-tach-ho-so.zip`;
+
+    // Bảng kết quả
+    resultCard.style.display = "block";
+    for (const row of logRows) {
+      const tr = document.createElement("tr");
+      if (row.can_kiem_tra === "CO") tr.className = "review";
+      tr.innerHTML = `
+        <td>${row.file}</td>
+        <td>${row.trang_bat_dau}-${row.trang_ket_thuc} (${row.so_trang})</td>
+        <td>${row.ma_loai_giay_to}</td>
+        <td>${row.ten_day_du_loai}</td>
+        <td>${escapeHtml(row.nhan_da_doc)}</td>
+        <td>${row.ty_le_khop}</td>
+        <td>${row.can_kiem_tra === "CO" ? '<span class="badge badge-review">Cần kiểm tra</span>' : '<span class="badge badge-ok">OK</span>'}</td>
+      `;
+      resultBody.appendChild(tr);
+    }
+
+    progressBar.value = 100;
+    setStatus(`✔ Hoàn tất — đã tách ${documents.length} văn bản. Bấm "Tải kết quả" để lưu file .zip.`);
+    btnDownload.disabled = false;
+  } catch (err) {
+    console.error(err);
+    setStatus("✖ Lỗi: " + err.message, true);
+    log("LỖI: " + err.message, true);
+  } finally {
+    btnRun.disabled = false;
+    setTimeout(() => { progressBar.style.display = "none"; }, 600);
+  }
+});
+
+btnDownload.addEventListener("click", () => {
+  if (!zipBlob) return;
+  const url = URL.createObjectURL(zipBlob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = zipFileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+function csvEscape(v) {
+  const s = String(v === undefined || v === null ? "" : v);
+  if (/[",\n\r]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+  return s;
+}
+
+function escapeHtml(s) {
+  return String(s || "")
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+</script>
+</body>
+</html>
