@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ công chứng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f2f5;
+        }
+        .tab-bar {
+            display: flex;
+            gap: 8px;
+            padding: 10px;
+            background: #ffffff;
+            border-bottom: 2px solid #e0e0e0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50px;
+            background: #ffffff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: #555;
+            text-transform: uppercase;
+            transition: all 0.25s ease;
+        }
+        .tab-btn:hover {
+            border-color: #e53935;
+            color: #e53935;
+            background: #fff5f5;
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #c62828, #e53935);
+            border-color: #c62828;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(198, 40, 40, 0.45);
+        }
+        .tab-content {
+            display: none;
+            height: calc(100vh - 77px);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="tab-bar">
+        <button class="tab-btn active" data-tab="hscb">HSCB</button>
+        <button class="tab-btn" data-tab="stamp">Stamp</button>
+    </div>
+
+    <div class="tab-content active" id="hscb">
+        <iframe src="HSCBv3.html"></iframe>
+    </div>
+    <div class="tab-content" id="stamp">
+        <iframe src="stamp.html"></iframe>
+    </div>
+
+    <script>
+        document.querySelectorAll('.tab-btn').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.tab-btn').forEach(function (b) {
+                    b.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(function (c) {
+                    c.classList.remove('active');
+                });
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
