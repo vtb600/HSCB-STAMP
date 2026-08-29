@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đóng dấu PL02 tự động - Mistral AI (HTML tĩnh)</title>
+<style>
+  :root {
+    --primary: #0b5394;
+    --primary-dark: #073763;
+    --accent: #cc0000;
+    --bg: #eef2f7;
+    --card: #ffffff;
+    --border: #d5dce5;
+    --text: #1f2a37;
+    --muted: #6b7280;
+    --ok: #15803d;
+    --err: #b91c1c;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+  }
+  header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: #fff;
+    padding: 22px 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  header h1 { margin: 0; font-size: 22px; font-weight: 600; }
+  header p { margin: 6px 0 0; font-size: 13px; opacity: .85; }
+  .notice {
+    max-width: 860px; margin: 14px auto 0; padding: 10px 16px;
+    background: #fff8e1; border: 1px solid #f0e0a8; border-radius: 8px;
+    font-size: 12.5px; color: #6d5900;
+  }
+  main { max-width: 860px; margin: 18px auto; padding: 0 16px 60px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 3px rgba(16,24,40,.06);
+  }
+  .card h2 {
+    margin: 0 0 14px;
+    font-size: 15px; font-weight: 600; color: var(--primary);
+    text-transform: uppercase; letter-spacing: .3px;
+    border-bottom: 2px solid var(--bg); padding-bottom: 8px;
+  }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .field { flex: 1 1 180px; margin-bottom: 12px; }
+  .field label { display: block; font-size: 12.5px; font-weight: 600; margin-bottom: 5px; color: #374151; }
+  .field .hint { font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+  input[type=text], input[type=password], input[type=number], select, textarea {
+    width: 100%; padding: 8px 10px; border: 1px solid var(--border);
+    border-radius: 6px; font-size: 13.5px; background: #fbfcfe; color: var(--text);
+  }
+  input:focus, select:focus, textarea:focus { outline: 2px solid rgba(11,83,148,.25); border-color: var(--primary); }
+  textarea { resize: vertical; font-family: "Consolas","Courier New",monospace; font-size: 12.5px; }
+  .dropzone {
+    border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 28px; text-align: center; color: var(--muted);
+    cursor: pointer; transition: all .15s; background: #fbfcfe;
+  }
+  .dropzone:hover, .dropzone.over { border-color: var(--primary); background: #f0f6fd; }
+  .dropzone .big { font-size: 15px; font-weight: 600; color: var(--primary); }
+  .dropzone .small { font-size: 12.5px; margin-top: 4px; }
+  .fileinfo { display: none; margin-top: 12px; padding: 10px 12px; background: #f0f7f0; border: 1px solid #bfe0bf; border-radius: 6px; font-size: 13px; }
+  .radio-group { display: flex; gap: 18px; flex-wrap: wrap; }
+  .radio-group label { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .radio-group input { margin-top: 3px; }
+  .btn {
+    background: var(--primary); color: #fff; border: none; border-radius: 8px;
+    padding: 11px 26px; font-size: 14.5px; font-weight: 600; cursor: pointer; transition: background .15s;
+  }
+  .btn:hover { background: var(--primary-dark); }
+  .btn:disabled { background: #9db6cc; cursor: not-allowed; }
+  .btn-secondary { background: #fff; color: var(--primary); border: 1px solid var(--primary); }
+  .btn-secondary:hover { background: #f0f6fd; }
+  .toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 4px; }
+  .progress-wrap { display: none; margin-top: 16px; }
+  .bar { height: 14px; background: #e5e9f0; border-radius: 7px; overflow: hidden; }
+  .bar > div { height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #1e6fb8); transition: width .4s; border-radius: 7px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: 12.5px; margin-top: 6px; color: var(--muted); }
+  .logbox {
+    display: none; margin-top: 14px; max-height: 220px; overflow-y: auto;
+    background: #0f1a24; color: #cfe3f7; border-radius: 8px; padding: 12px 14px;
+    font-family: "Consolas","Courier New",monospace; font-size: 12px; white-space: pre-wrap; word-break: break-word;
+  }
+  .logbox div { padding: 1px 0; }
+  .result { display: none; margin-top: 16px; padding: 14px 16px; background: #f0f7f0; border: 1px solid #bfe0bf; border-radius: 8px; }
+  .result a { display: inline-block; margin-right: 12px; color: var(--ok); font-weight: 600; }
+  .error-msg { display: none; margin-top: 14px; padding: 12px 14px; background: #fdf0f0; border: 1px solid #f0c4c4; border-radius: 8px; color: var(--err); font-size: 13px; white-space: pre-wrap; }
+  .status-badge { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 12px; background: #e5e9f0; color: #374151; }
+  .status-badge.done { background: #dcf3e3; color: var(--ok); }
+  .status-badge.error { background: #fde0e0; color: var(--err); }
+  .status-badge.running { background: #e3edfb; color: var(--primary); }
+  footer { text-align: center; font-size: 12px; color: var(--muted); padding: 18px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Đóng dấu PL02 tự động bằng Mistral AI (HTML tĩnh)</h1>
+  <p>Chạy hoàn toàn trong trình duyệt — không cần server. Đọc &amp; phân loại từng trang PDF scan, typewriter mã PL02 (màu đỏ) vào góc trên-trái trang đầu mỗi văn bản. KHÔNG tách file PDF.</p>
+</header>
+
+<div class="notice">
+  <b>Lưu ý:</b> Bản tĩnh chạy trực tiếp trong trình duyệt nên cần internet để tải thư viện pdf.js/pdf-lib từ CDN và gọi API Mistral
+  (<code>api.mistral.ai</code> hỗ trợ CORS). Nhãn đóng dấu được chèn dưới dạng <b>chú thích PDF (FreeText annotation)</b>, không vẽ chết
+  lên nội dung trang — vì vậy sau khi tải file kết quả, có thể mở bằng <b>Foxit Reader</b> (hoặc Adobe Acrobat), dùng công cụ
+  <b>Typewriter/Comment</b>, bấm đúp vào ô nhãn để sửa lại nếu AI phân loại sai, mà không cần chạy lại toàn bộ quy trình.
+</div>
+
+<main>
+  <section class="card" id="section_mistral_config">
+    <h2>1. Cấu hình Mistral AI</h2>
+    <div class="row">
+      <div class="field" style="flex:2 1 280px">
+        <label for="api_key">Mistral API key *</label>
+        <input type="password" id="api_key" placeholder="Lấy tại https://console.mistral.ai/ (mục API Keys)">
+        <div class="hint">Gói Free giới hạn ~1 request/giây, nên giữ độ trễ 3 giây/trang. Key chỉ gọi trực tiếp lên Mistral từ trình duyệt của bạn.</div>
+        <label style="display:flex;gap:6px;align-items:center;font-weight:500;font-size:12.5px;margin-top:8px;cursor:pointer">
+          <input type="checkbox" id="remember_key" style="width:auto"> Ghi nhớ API key trên trình duyệt này (lưu cục bộ, không gửi đi đâu khác)
+        </label>
+      </div>
+      <div class="field">
+        <label for="model">Model Vision</label>
+        <select id="model">
+          <option value="mistral-small-latest" selected>mistral-small-latest (mặc định)</option>
+          <option value="mistral-medium-latest">mistral-medium-latest</option>
+          <option value="mistral-large-latest">mistral-large-latest</option>
+          <option value="pixtral-large-latest">pixtral-large-latest</option>
+          <option value="__custom__">Tên model khác...</option>
+        </select>
+        <input type="text" id="model_custom" placeholder="Nhập tên model" style="display:none;margin-top:6px">
+      </div>
+      <div class="field">
+        <label for="delay">Nghỉ giữa các trang (giây)</label>
+        <input type="number" id="delay" value="1" min="0" step="0.5">
+        <div class="hint">Gói trả phí có thể đặt 0.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>2. Chọn file PDF</h2>
+    <div class="dropzone" id="dropzone">
+      <div class="big">Kéo &amp; thả file PDF vào đây</div>
+      <div class="small">hoặc bấm để chọn file từ máy tính</div>
+    </div>
+    <input type="file" id="file" accept="application/pdf,.pdf" style="display:none">
+    <div class="fileinfo" id="fileinfo"></div>
+  </section>
+
+  <section class="card">
+    <h2>3. Tuỳ chọn đóng dấu</h2>
+
+    <div class="field">
+      <label>Nội dung đóng dấu</label>
+      <div class="radio-group">
+        <label><input type="radio" name="label_mode" id="label_mode_ai" value="ai" checked> Tự động phân loại bằng AI (theo mã PL02)</label>
+        <label><input type="radio" name="label_mode" id="label_mode_custom" value="custom"> Nhập văn bản tự do</label>
+      </div>
+    </div>
+
+    <div class="field" id="custom_text_wrap" style="display:none">
+      <label for="custom_text">Văn bản đóng dấu</label>
+      <input type="text" id="custom_text" placeholder='Vd: "BẢN SAO", "ĐÃ ĐỐI CHIẾU BẢN CHÍNH"...'>
+      <div class="hint">Ở chế độ này công cụ KHÔNG gọi API Mistral, không cần API key — chỉ chèn đúng văn bản bạn nhập vào các trang chọn bên dưới, dưới dạng chú thích có thể sửa lại bằng Foxit/Acrobat. Lưu ý: chữ có dấu tiếng Việt hiển thị chính xác nhất khi mở bằng Foxit Reader/Adobe Acrobat; một số trình xem PDF đơn giản khác có thể hiển thị sai dấu.</div>
+    </div>
+
+    <div class="field" id="custom_apply_wrap" style="display:none">
+      <label for="custom_apply">Áp dụng cho</label>
+      <select id="custom_apply">
+        <option value="first">Chỉ trang đầu tiên của file</option>
+        <option value="all">Tất cả các trang</option>
+        <option value="list">Danh sách trang cụ thể...</option>
+      </select>
+      <input type="text" id="custom_pages" placeholder="Vd: 1,3,5-8" style="display:none;margin-top:6px">
+      <div class="hint">Đánh số trang bắt đầu từ 1, có thể liệt kê cách nhau bằng dấu phẩy và/hoặc khoảng bằng dấu gạch ngang.</div>
+    </div>
+
+    <div class="row">
+      <div class="field">
+        <label>Cỡ chữ (pt)</label>
+        <input type="number" id="font_size" value="12" min="4" step="1">
+      </div>
+      <div class="field">
+        <label for="stamp_color">Màu chữ đóng dấu</label>
+        <input type="color" id="stamp_color" value="#cc0000" style="height:36px;padding:2px 4px;cursor:pointer">
+      </div>
+      <div class="field">
+        <label>Cách mép trái (point)</label>
+        <input type="number" id="margin_x" value="15" min="0" step="1">
+      </div>
+      <div class="field">
+        <label>Cách mép trên (point)</label>
+        <input type="number" id="margin_y" value="12" min="0" step="1">
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="section_catalog">
+    <h2>4. Danh mục PL02 &amp; quy tắc phân biệt (tuỳ chọn)</h2>
+    <div class="field">
+      <label for="config_text">Nội dung file cấu hình JSON (để trống = dùng danh mục mặc định)</label>
+      <textarea id="config_text" rows="6" placeholder='{"danh_muc_loai_giay_to": [...], "quy_tac_phan_biet": "..."}'></textarea>
+      <div class="toolbar">
+        <button type="button" class="btn btn-secondary" id="btn_load_default">Nạp danh mục mặc định vào ô</button>
+        <label class="btn btn-secondary" style="cursor:pointer;display:inline-block;padding:8px 26px;">
+          Hoặc tải lên file JSON
+          <input type="file" id="config_file" accept=".json,application/json" style="display:none">
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <div class="toolbar" style="margin-bottom:10px">
+    <button class="btn" id="btn_start">Bắt đầu đóng dấu</button>
+    <span class="status-badge" id="status_badge" style="display:none">Chưa bắt đầu</span>
+  </div>
+
+  <div class="progress-wrap" id="progress_wrap">
+    <div class="bar"><div id="bar_fill"></div></div>
+    <div class="progress-meta"><span id="progress_text">0/0 trang</span><span id="phase_text"></span></div>
+  </div>
+
+  <div class="logbox" id="logbox"></div>
+
+  <div class="result" id="result">
+    <b>Đã xong.</b> Tải file kết quả:
+    <a href="#" id="link_pdf" download="da_danh_dau.pdf">File PDF đã đóng dấu</a>
+    <a href="#" id="link_log" download="da_danh_dau_log_danh_dau.csv">File log CSV (đối chiếu)</a>
+    <div class="hint" style="margin-top:8px">Mở file log để đối chiếu lại mã loại giấy tờ — AI chỉ đánh STT theo thứ tự trang trong file gốc, cần tự kiểm tra trước khi dùng công cụ khác tách file.</div>
+  </div>
+
+  <div class="error-msg" id="error_msg"></div>
+</main>
+
+<footer>Công cụ HTML tĩnh tương đương stamp_pdf_mistral.py — upload toàn bộ trang này lên GitHub Pages là chạy được.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+(function () {
+  "use strict";
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  // -------------------------------------------------------------
+  // Danh mục PL02 mặc định (giống stamp_pdf_mistral.py)
+  // -------------------------------------------------------------
+  var DANH_MUC_MAC_DINH = [
+    ["QDTUYENDUNG", "Quyết định tuyển dụng lao động thử việc VÀ các quyết định tiếp theo trong cùng chuỗi tuyển dụng — bao gồm cả 'Quyết định V/v chấm dứt thời gian thử việc, ký hợp đồng lao động xác định/không xác định thời hạn'. Nhận diện qua tiêu đề có cụm 'Tuyển dụng lao động thử việc' hoặc 'chấm dứt thời gian thử việc, ký hợp đồng lao động...'. KHÔNG dùng QDCHAMDUT cho loại này."],
+    ["THONGBAOLUONG", "Thông báo lương / thông báo kết quả xếp lương, tăng lương"],
+    ["SOYEULYLICH", "Sơ yếu lý lịch do cán bộ tự khai và có xác nhận của cơ quan nhà nước có thẩm quyền (thường có dán ảnh 4x6, tiêu đề 'SƠ YẾU LÝ LỊCH')"],
+    ["GIAYKHAISINH", "Bản sao Giấy khai sinh có chứng thực của cơ quan có thẩm quyền (mẫu của UBND xã/phường, tiêu đề 'GIẤY KHAI SINH')"],
+    ["CCCD", "Bản sao Căn cước công dân/Căn cước có chứng thực của cơ quan có thẩm quyền (ảnh thẻ CCCD có mã QR, quốc huy, dòng chữ 'CĂN CƯỚC CÔNG DÂN' hoặc 'CĂN CƯỚC')"],
+    ["CMND", "Bản sao Chứng minh nhân dân (mẫu CMND cũ, 9 hoặc 12 số) có chứng thực của cơ quan có thẩm quyền"],
+    ["HOCHIEU", "Bản sao hộ chiếu có chứng thực của cơ quan có thẩm quyền"],
+    ["DINHDANH", "Bản sao mã định danh điện tử/thông báo định danh cá nhân có chứng thực của cơ quan có thẩm quyền"],
+    ["BANGDAIHOC", "Bằng đại học / bằng cử nhân (văn bằng tốt nghiệp, có quốc huy, tên trường, ngành học, xếp loại)"],
+    ["BANGDIEMDH", "Bảng điểm đại học (bảng liệt kê 'STT | Mã HP/Unit code | Tên học phần/Unit title' kèm điểm số)"],
+    ["BANGTIENSI", "Bằng tiến sĩ"],
+    ["BANGTHACSI", "Bằng thạc sĩ"],
+    ["CHUNGCHIKHAC", "Chứng chỉ khác, bằng cấp khác không thuộc các mã trên (vd: chứng chỉ ngoại ngữ/tin học, TOEIC, IELTS, chứng chỉ nghiệp vụ ngân hàng, chứng chỉ đào tạo ngắn hạn...)"],
+    ["GIAYKHAMSK", "Giấy khám sức khỏe (mẫu của cơ sở y tế/bệnh viện, có các mục khám thể lực, khám lâm sàng, tiêu đề 'GIẤY KHÁM SỨC KHỎE')"],
+    ["CV", "Hồ sơ/thông tin ứng viên nộp khi ứng tuyển (mẫu nội bộ 'THÔNG TIN ỨNG VIÊN', kỹ năng, quá trình công tác — khác với Sơ yếu lý lịch có xác nhận nhà nước)"],
+    ["QDCHAMDUT", "Quyết định chấm dứt HỢP ĐỒNG LAO ĐỘNG / chấm dứt quan hệ lao động, cho thôi việc, nghỉ việc HẲN. CHỈ dùng mã này khi văn bản thật sự chấm dứt việc làm; KHÔNG dùng cho quyết định kết thúc thời gian thử việc để ký HĐLĐ tiếp theo (loại đó thuộc QDTUYENDUNG)."],
+    ["CAMKETBAOMAT", "Cam kết/Hợp đồng bảo mật thông tin (tiêu đề có thể là 'CAM KẾT BẢO MẬT THÔNG TIN' hoặc 'HỢP ĐỒNG BẢO MẬT THÔNG TIN')"],
+    ["CAMKETKHAC", "Bản cam kết khác không phải bảo mật thông tin (vd: cam kết không cạnh tranh, cam kết thử thách công việc...)"],
+    ["HDTHUVIEC", "Hợp đồng thử việc (tiêu đề có cụm 'HỢP ĐỒNG THỬ VIỆC' hoặc 'HĐTV')"],
+    ["HDXDTH", "Hợp đồng lao động XÁC ĐỊNH THỜI HẠN (tiêu đề có cụm 'HỢP ĐỒNG LAO ĐỘNG' kèm 'XÁC ĐỊNH THỜI HẠN' hoặc mã hiệu 'HDLD.XDTH')"],
+    ["HDKXDTH", "Hợp đồng lao động KHÔNG XÁC ĐỊNH THỜI HẠN (tiêu đề có cụm 'KHÔNG XÁC ĐỊNH THỜI HẠN' hoặc mã hiệu 'HDLD.KXDTH')"],
+    ["PHULUCHD", "Phụ lục hợp đồng lao động (văn bản sửa đổi/bổ sung một số điều khoản của HĐLĐ đã ký, tiêu đề 'PHỤ LỤC HỢP ĐỒNG LAO ĐỘNG')"],
+    ["HDDAOTAO", "Hợp đồng đào tạo / cam kết đào tạo (ràng buộc nghĩa vụ làm việc sau khi được cử đi đào tạo)"],
+    ["QDDIEUDONG", "Quyết định điều động / Quyết định chuyển đổi vị trí, đơn vị công tác (không phải bổ nhiệm chức danh quản lý)"],
+    ["QDBONHIEM", "Quyết định bổ nhiệm chức danh quản lý / điều động kèm bổ nhiệm"],
+    ["QDTAMHOAN", "Quyết định tạm hoãn thực hiện hợp đồng lao động"],
+    ["QDDIEUCHINH", "Quyết định điều chỉnh cấp bậc, ngạch/bậc lương, chức danh công việc (không kèm đổi vị trí/đơn vị)"],
+    ["QDNGHIHUU", "Quyết định nghỉ hưu"],
+    ["QDKYLUAT", "Quyết định/biên bản xử lý kỷ luật lao động"],
+    ["KEKHAITS", "Bản kê khai tài sản, thu nhập"]
+  ];
+
+  var QUY_TAC_PHAN_BIET_MAC_DINH = `1. "Quyết định V/v chấm dứt thời gian thử việc, ký hợp đồng lao động xác định/không xác định thời hạn" là quyết định KẾT THÚC THỬ VIỆC để chuyển sang ký HĐLĐ chính thức — vẫn thuộc nhóm QDTUYENDUNG, TUYỆT ĐỐI KHÔNG gán QDCHAMDUT dù tiêu đề có chữ "chấm dứt". Chỉ gán QDCHAMDUT khi văn bản thật sự chấm dứt HỢP ĐỒNG LAO ĐỘNG / quan hệ lao động (cho thôi việc hẳn, nghỉ việc).
+2. Phân biệt 3 loại hợp đồng lao động bằng đúng cụm từ trong tiêu đề:
+   "THỬ VIỆC" -> HDTHUVIEC; "XÁC ĐỊNH THỜI HẠN" -> HDXDTH; "KHÔNG XÁC ĐỊNH THỜI HẠN" -> HDKXDTH.
+   Văn bản chỉ sửa đổi/bổ sung một vài điều khoản của hợp đồng đã ký (không phải hợp đồng mới) -> PHULUCHD.
+3. CCCD (thẻ căn cước có mã QR, quốc huy) khác CMND (chứng minh nhân dân mẫu cũ) khác GIAYKHAISINH (giấy khai sinh do UBND cấp) khác SOYEULYLICH (sơ yếu lý lịch có dán ảnh, do cán bộ tự khai) — đọc kỹ tiêu đề/loại giấy tờ trên ảnh.
+4. CAMKETBAOMAT dùng cho cả văn bản tiêu đề "CAM KẾT BẢO MẬT THÔNG TIN" lẫn "HỢP ĐỒNG BẢO MẬT THÔNG TIN". CAMKETKHAC chỉ dùng cho cam kết KHÔNG liên quan bảo mật thông tin.
+5. Nếu trang không có nội dung gì thì không đánh dấu
+6. QDDIEUDONG (điều động/chuyển đổi vị trí) khác QDBONHIEM (bổ nhiệm chức danh quản lý) khác QDDIEUCHINH (chỉ điều chỉnh cấp bậc/ngạch lương, không đổi vị trí công tác).`;
+
+  var DANH_MUC = DANH_MUC_MAC_DINH;
+  var QUY_TAC = QUY_TAC_PHAN_BIET_MAC_DINH;
+  var MA_HOP_LE = null;
+  var danhMucTextLines = "";
+
+  function setCatalog(catalog, rules) {
+    DANH_MUC = catalog;
+    QUY_TAC = rules;
+    MA_HOP_LE = new Set(catalog.map(function (x) { return x[0]; }));
+    MA_HOP_LE.add("KHAC");
+    danhMucTextLines = catalog.map(function (x) { return '  - "' + x[0] + '": ' + x[1]; }).join("\n");
+  }
+  setCatalog(DANH_MUC_MAC_DINH, QUY_TAC_PHAN_BIET_MAC_DINH);
+
+  // -------------------------------------------------------------
+  // Tiện ích UI
+  // -------------------------------------------------------------
+  function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+  function formatSize(b) {
+    if (b >= 1048576) return (b / 1048576).toFixed(2) + " MB";
+    if (b >= 1024) return (b / 1024).toFixed(1) + " KB";
+    return b + " B";
+  }
+  function addLog(line) {
+    var box = $("logbox");
+    box.style.display = "block";
+    var div = document.createElement("div");
+    div.textContent = line;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+  }
+  function setBadge(cls, text) {
+    var b = $("status_badge");
+    b.style.display = "inline-block";
+    b.className = "status-badge " + cls;
+    b.textContent = text;
+  }
+  function showError(msg) { $("error_msg").textContent = msg; $("error_msg").style.display = "block"; }
+  function hideError() { $("error_msg").style.display = "none"; }
+
+  // -------------------------------------------------------------
+  // Chọn file
+  // -------------------------------------------------------------
+  var fileInput = $("file");
+  var dropzone = $("dropzone");
+  var selectedFile = null;
+
+  dropzone.addEventListener("click", function () { fileInput.click(); });
+  dropzone.addEventListener("dragover", function (e) { e.preventDefault(); dropzone.classList.add("over"); });
+  dropzone.addEventListener("dragleave", function () { dropzone.classList.remove("over"); });
+  dropzone.addEventListener("drop", function (e) {
+    e.preventDefault();
+    dropzone.classList.remove("over");
+    if (e.dataTransfer.files.length) { setFile(e.dataTransfer.files[0]); }
+  });
+  fileInput.addEventListener("change", function () {
+    if (fileInput.files.length) { setFile(fileInput.files[0]); }
+  });
+  function setFile(f) {
+    if (!f.name.toLowerCase().endsWith(".pdf")) { showError("File phải có định dạng .pdf"); return; }
+    selectedFile = f;
+    $("fileinfo").style.display = "block";
+    $("fileinfo").textContent = "Đã chọn: " + f.name + " (" + formatSize(f.size) + ")";
+    hideError();
+  }
+
+  var modelSel = $("model");
+  var modelCustom = $("model_custom");
+  modelSel.addEventListener("change", function () {
+    modelCustom.style.display = modelSel.value === "__custom__" ? "block" : "none";
+  });
+  function currentModel() {
+    return modelSel.value === "__custom__" ? (modelCustom.value.trim() || "mistral-small-latest") : modelSel.value;
+  }
+
+  // -------------------------------------------------------------
+  // Ghi nhớ Mistral API key (localStorage, chỉ trên máy này)
+  // -------------------------------------------------------------
+  var API_KEY_STORAGE = "pl02_stamp_mistral_api_key";
+  var apiKeyInput = $("api_key");
+  var rememberKeyChk = $("remember_key");
+  (function initApiKey() {
+    try {
+      var saved = localStorage.getItem(API_KEY_STORAGE);
+      if (saved) {
+        apiKeyInput.value = saved;
+        rememberKeyChk.checked = true;
+      }
+    } catch (e) { /* trình duyệt chặn localStorage, bỏ qua */ }
+  })();
+  rememberKeyChk.addEventListener("change", function () {
+    try {
+      if (!rememberKeyChk.checked) { localStorage.removeItem(API_KEY_STORAGE); }
+      else if (apiKeyInput.value.trim()) { localStorage.setItem(API_KEY_STORAGE, apiKeyInput.value.trim()); }
+    } catch (e) {}
+  });
+  apiKeyInput.addEventListener("input", function () {
+    if (rememberKeyChk.checked) {
+      try { localStorage.setItem(API_KEY_STORAGE, apiKeyInput.value.trim()); } catch (e) {}
+    }
+  });
+
+  // -------------------------------------------------------------
+  // Chế độ nhãn: AI tự động phân loại / Văn bản tự do
+  // -------------------------------------------------------------
+  var customTextWrap = $("custom_text_wrap");
+  var customApplyWrap = $("custom_apply_wrap");
+  var sectionMistral = $("section_mistral_config");
+  var sectionCatalog = $("section_catalog");
+  function updateLabelModeUI() {
+    var isCustom = $("label_mode_custom").checked;
+    customTextWrap.style.display = isCustom ? "block" : "none";
+    customApplyWrap.style.display = isCustom ? "block" : "none";
+    sectionMistral.style.display = isCustom ? "none" : "block";
+    sectionCatalog.style.display = isCustom ? "none" : "block";
+  }
+  $("label_mode_ai").addEventListener("change", updateLabelModeUI);
+  $("label_mode_custom").addEventListener("change", updateLabelModeUI);
+  updateLabelModeUI();
+  $("custom_apply").addEventListener("change", function () {
+    $("custom_pages").style.display = $("custom_apply").value === "list" ? "block" : "none";
+  });
+
+  function parsePageList(str, totalPages) {
+    var pages = new Set();
+    str.split(",").forEach(function (part) {
+      part = part.trim();
+      if (!part) return;
+      var m = part.match(/^(\d+)\s*-\s*(\d+)$/);
+      if (m) {
+        var a = parseInt(m[1], 10), b = parseInt(m[2], 10);
+        if (a > b) { var t = a; a = b; b = t; }
+        for (var i = a; i <= b; i++) { if (i >= 1 && i <= totalPages) pages.add(i - 1); }
+      } else {
+        var n = parseInt(part, 10);
+        if (!isNaN(n) && n >= 1 && n <= totalPages) pages.add(n - 1);
+      }
+    });
+    return Array.from(pages).sort(function (a, b) { return a - b; });
+  }
+
+  function hexToRgbComponents(hex) {
+    hex = (hex || "#cc0000").replace("#", "");
+    if (hex.length === 3) { hex = hex.split("").map(function (c) { return c + c; }).join(""); }
+    return {
+      r: parseInt(hex.substring(0, 2), 16) / 255,
+      g: parseInt(hex.substring(2, 4), 16) / 255,
+      b: parseInt(hex.substring(4, 6), 16) / 255
+    };
+  }
+
+  // Chuỗi Unicode (UTF-16BE + BOM) để lưu đúng dấu tiếng Việt trong annotation
+  function utf16BEHex(str) {
+    var hex = "feff";
+    for (var i = 0; i < str.length; i++) {
+      hex += str.charCodeAt(i).toString(16).padStart(4, "0");
+    }
+    return hex;
+  }
+
+  // -------------------------------------------------------------
+  // Chèn nhãn dưới dạng FreeText annotation (chú thích) thay vì vẽ chết
+  // lên nội dung trang -> có thể mở bằng Foxit Reader / Adobe Acrobat,
+  // dùng công cụ Typewriter/Comment để bấm đúp vào ô và sửa lại nội dung
+  // nếu AI phân loại sai, mà không cần chạy lại toàn bộ quy trình.
+  // -------------------------------------------------------------
+  function addFreeTextAnnotation(pdfDoc, page, opts) {
+    var context = pdfDoc.context;
+    var PDFName = PDFLib.PDFName;
+    var PDFString = PDFLib.PDFString;
+    var PDFHexString = PDFLib.PDFHexString;
+    var PDFArray = PDFLib.PDFArray;
+
+    var text = opts.text;
+    var fontSize = opts.fontSize;
+    var c = opts.color;
+
+    var padX = 4, padY = 3;
+    var estWidth = Math.max(60, text.length * fontSize * 0.72 + padX * 2);
+    var estHeight = fontSize * 1.55 + padY * 2;
+
+    var x1 = opts.x;
+    var y2 = opts.yTop;
+    var y1 = y2 - estHeight;
+    var x2 = x1 + estWidth;
+
+    var colorStr = c.r.toFixed(3) + " " + c.g.toFixed(3) + " " + c.b.toFixed(3) + " rg";
+    var da = colorStr + " /Helv " + fontSize + " Tf";
+    var hexColor = Math.round(c.r * 255).toString(16).padStart(2, "0")
+      + Math.round(c.g * 255).toString(16).padStart(2, "0")
+      + Math.round(c.b * 255).toString(16).padStart(2, "0");
+
+    var dict = context.obj({
+      Type: "Annot",
+      Subtype: "FreeText",
+      Rect: [x1, y1, x2, y2],
+      Contents: PDFHexString.of(utf16BEHex(text)),
+      DA: PDFString.of(da),
+      DS: PDFString.of("font: Helvetica " + fontSize + "pt; color:#" + hexColor + ";"),
+      CA: 1,
+      F: 4,
+      IT: "FreeTextTypeWriter",
+      BS: { W: 0 }
+    });
+
+    var ref = context.register(dict);
+    var Annots = PDFName.of("Annots");
+    var existing = page.node.lookup(Annots);
+    var arr;
+    if (existing instanceof PDFArray) {
+      arr = existing;
+    } else {
+      arr = context.obj([]);
+      page.node.set(Annots, arr);
+    }
+    arr.push(ref);
+    return ref;
+  }
+
+  $("btn_load_default").addEventListener("click", function () {
+    $("config_text").value = JSON.stringify({
+      danh_muc_loai_giay_to: DANH_MUC_MAC_DINH.map(function (x) { return { ma: x[0], mo_ta: x[1] }; }),
+      quy_tac_phan_biet: QUY_TAC_PHAN_BIET_MAC_DINH
+    }, null, 2);
+  });
+  $("config_file").addEventListener("change", function () {
+    var f = $("config_file").files[0];
+    if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      try { JSON.parse(reader.result); } catch (e) { showError("File JSON cấu hình không hợp lệ."); return; }
+      $("config_text").value = reader.result;
+      hideError();
+    };
+    reader.readAsText(f);
+  });
+
+  // -------------------------------------------------------------
+  // Prompt (giống build_prompt_text của bản Python)
+  // -------------------------------------------------------------
+  function buildPromptText(prevMa, hasPrevImage) {
+    var anhNote = hasPrevImage
+      ? `Bạn được cung cấp 2 ẢNH:
+- ẢNH THỨ NHẤT = TRANG TRƯỚC (trang liền kề, đứng ngay trước trang đang xét trong file gốc).
+- ẢNH THỨ HAI = TRANG ĐANG XÉT (trang cần phân loại).
+
+Hãy so sánh trực quan 2 ảnh này: bố cục, phông chữ, số hiệu văn bản, đã có chữ ký/con dấu ở ảnh trước hay chưa. Từ đó quyết định trang đang xét là TIẾP NỐI của đúng văn bản ở ảnh trước, hay là một văn bản HOÀN TOÀN MỚI.`
+      : `Đây là TRANG ĐẦU TIÊN của file (không có trang trước để so sánh) — chỉ có 1 ảnh duy nhất, là ảnh của trang đang xét.`;
+
+    return [
+`# NHIỆM VỤ
+
+Bạn đang xem ảnh chụp/scan của (các) TRANG trong bộ hồ sơ nhân sự tiếng Việt (hồ sơ cán bộ ngân hàng: quyết định, sơ yếu lý lịch, bằng cấp, hợp đồng...).
+
+${anhNote}`,
+
+`# LƯU Ý QUAN TRỌNG VỀ LOGO
+
+Hầu hết các trang trong file này đều có LOGO/HEADER "VietinBank" lặp lại ở đầu trang. Đây là header cố định của công ty, KHÔNG PHẢI dấu hiệu của một văn bản mới.
+
+Tuyệt đối KHÔNG kết luận is_new_document_start = true chỉ vì thấy logo/header. Phải xem có TIÊU ĐỀ VĂN BẢN + SỐ HIỆU VĂN BẢN MỚI hay không (xem quy tắc chi tiết ở phần B bên dưới).`,
+
+`# DANH MỤC MÃ LOẠI GIẤY TỜ (trích Phụ lục 02)
+
+Dưới đây là danh mục mã chính thức, kèm mô tả và các cụm từ/tiêu đề thường gặp trên chính văn bản thật để bạn đối chiếu. Bạn PHẢI chọn đúng 1 mã trong danh sách này cho TRANG ĐANG XÉT, dựa vào TIÊU ĐỀ và NỘI DUNG đọc được trên ảnh (ưu tiên đọc đúng tiêu đề/trích yếu ở đầu trang hơn là đoán theo bố cục):
+
+${danhMucTextLines}
+
+- "KHAC": chỉ dùng khi trang không khớp với bất kỳ mã nào ở trên (ví dụ: trang trắng, trang chỉ có logo/watermark ngân hàng, phụ lục biểu mẫu không xác định được loại).`,
+
+`# QUY TẮC PHÂN BIỆT CÁC LOẠI DỄ NHẦM LẪN
+
+${QUY_TAC}`,
+
+`# BỐI CẢNH TRANG TRƯỚC
+
+Trang trước đó (nếu có) được xác định là mã: ${prevMa || "(không có, đây là trang đầu tiên của file)"}`,
+
+`# CÁCH XÁC ĐỊNH RANH GIỚI VĂN BẢN MỚI (is_new_document_start)
+
+## A. Dấu hiệu của TRANG TIẾP NỐI (is_new_document_start = FALSE)
+
+Rất phổ biến trong hồ sơ nhiều trang như hợp đồng, phụ lục hợp đồng:
+
+- Có đánh số dạng "Trang X/Y", "X/Y", hoặc số thứ tự trang ở góc/chân trang (ví dụ: "1/4", "2/4"...) — bằng chứng RẤT MẠNH cho thấy đây là 1 trong nhiều trang của CÙNG một văn bản, KHÔNG phải văn bản mới.
+- Trang bắt đầu bằng nội dung ĐIỀU KHOẢN tiếp theo, không có tiêu đề văn bản mới: ví dụ bắt đầu bằng "Điều 4.", "Điều 5.", hoặc các gạch đầu dòng/mục nhỏ tiếp nối như "b)", "c)", "d)", "- ...", hoặc đoạn văn không viết hoa toàn bộ mở đầu trang (khác với tiêu đề văn bản luôn in hoa/đậm, căn giữa).
+- KHÔNG xuất hiện dòng "Số: .../QĐ-...", "Số HĐLĐ: ...", "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM" ở đầu trang (những dòng mở đầu bắt buộc của 1 văn bản mới).
+- Chỉ có chữ ký/con dấu/họ tên các bên mà KHÔNG có tiêu đề + số hiệu mới phía trên — đây là trang ký kết thúc của văn bản đang xét, không phải văn bản mới.
+- Khi so sánh với ẢNH TRANG TRƯỚC: nếu bố cục/phông chữ/kiểu trình bày giống hệt trang trước và mạch nội dung nối tiếp logic (ví dụ trang trước kết ở "Điều 3", trang này mở đầu "Điều 4") thì gần như chắc chắn là trang tiếp nối.
+
+## B. Dấu hiệu của VĂN BẢN MỚI THẬT SỰ (is_new_document_start = TRUE)
+
+- Có tiêu đề in hoa/đậm, thường căn giữa đầu trang (ví dụ "HỢP ĐỒNG LAO ĐỘNG", "QUYẾT ĐỊNH", "PHỤ LỤC HỢP ĐỒNG LAO ĐỘNG"...) KÈM số hiệu văn bản MỚI (ví dụ "Số: .../QĐ-...", "Số HĐLĐ: ...", "Mã hiệu: BM...") khác với văn bản ở trang trước.
+- Số hiệu văn bản (nếu đọc được) khác với số hiệu của văn bản đang xét ở trang trước — đây là bằng chứng chắc chắn nhất.
+- Trang không có đánh số "X/Y" nối tiếp từ trang trước (ví dụ trang trước là "3/4" mà trang này không phải "4/4" mà lại có tiêu đề riêng).
+- Lưu ý: một văn bản có thể có PHỤ LỤC đính kèm ngay sau — phụ lục hợp đồng ("PHỤ LỤC HỢP ĐỒNG LAO ĐỘNG") có tiêu đề + số hiệu riêng nên VẪN được coi là is_new_document_start = true (là 1 văn bản riêng, mã PHULUCHD) dù nó đi kèm ngay sau 1 hợp đồng — trừ khi phụ lục đó chính là 1 trong các trang đánh số "X/Y" của văn bản trước (khi đó là tiếp nối, không phải phụ lục độc lập).
+
+## Khi không chắc chắn 100%
+
+Ưu tiên dựa vào theo thứ tự:
+1. Số trang "X/Y" nếu có.
+2. Có tiêu đề + số hiệu MỚI hay không.
+3. So sánh trực quan bố cục giữa 2 ảnh.`,
+
+`# ĐỊNH DẠNG TRẢ LỜI
+
+Hãy trả lời theo đúng schema JSON:
+
+- is_new_document_start: true nếu trang đang xét là TRANG ĐẦU TIÊN của 1 văn bản KHÁC với trang trước (false nếu chỉ là trang tiếp theo / mặt sau / chữ ký / phần nối tiếp của CÙNG văn bản đang xét — xem mục A ở trên).
+- ma_loai_giay_to: PHẢI là một trong các mã ở danh mục trên (viết đúng chính xác, in hoa, không dấu, không thêm ký tự khác), hoặc "KHAC".
+- title: tiêu đề / trích yếu ngắn gọn đọc được trên trang (chỉ cần điền nếu đây là trang đầu văn bản; nếu không, để chuỗi rỗng "").`
+    ].join("\n\n");
+  }
+
+  // -------------------------------------------------------------
+  // Gọi Mistral (giống ask_mistral_about_page)
+  // -------------------------------------------------------------
+  async function askMistralAboutPage(apiKey, model, b64Data, prevMa, prevPngB64) {
+    var hasPrev = prevPngB64 != null;
+    var prompt = buildPromptText(prevMa, hasPrev);
+    var content = [{ type: "text", text: prompt }];
+    if (hasPrev) {
+      content.push({ type: "text", text: "== ẢNH 1: TRANG TRƯỚC ==" });
+      content.push({ type: "image_url", image_url: { url: "data:image/png;base64," + prevPngB64 } });
+      content.push({ type: "text", text: "== ẢNH 2: TRANG ĐANG XÉT (cần phân loại) ==" });
+      content.push({ type: "image_url", image_url: { url: "data:image/png;base64," + b64Data } });
+    } else {
+      content.push({ type: "image_url", image_url: { url: "data:image/png;base64," + b64Data } });
+    }
+    var messages = [
+      { role: "system", content: "Bạn là trợ lý phân loại tài liệu scan. Chỉ trả lời theo đúng schema JSON được yêu cầu." },
+      { role: "user", content: content }
+    ];
+
+    var maxAttempts = 5;
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+      var resp, data;
+      try {
+        resp = await fetch("https://api.mistral.ai/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + apiKey
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: messages,
+            response_format: { type: "json_object" },
+            max_tokens: 300,
+            temperature: 0
+          })
+        });
+        data = await resp.json();
+      } catch (netErr) {
+        addLog("    [!] Lỗi mạng lần " + attempt + "/" + maxAttempts + ": " + netErr.message + ". Thử lại sau 5s...");
+        await sleep(5000);
+        continue;
+      }
+
+      if (!resp.ok) {
+        var errText = JSON.stringify(data);
+        var lower = errText.toLowerCase();
+        if (resp.status === 429 || lower.indexOf("rate limit") >= 0 || lower.indexOf("capacity") >= 0) {
+          addLog("    [!] Vượt quota/rate limit (429), lần " + attempt + "/" + maxAttempts + ". Đợi 20s rồi thử lại...");
+          await sleep(20000);
+          continue;
+        }
+        if (resp.status === 401 || lower.indexOf("unauthorized") >= 0) {
+          throw new Error("[LỖI] API key không hợp lệ hoặc hết hạn. Chi tiết: " + errText);
+        }
+        if (resp.status === 404 || (lower.indexOf("model") >= 0 && (lower.indexOf("not found") >= 0 || lower.indexOf("invalid") >= 0))) {
+          throw new Error("[LỖI] Model \"" + model + "\" không tồn tại hoặc không hỗ trợ. Chi tiết: " + errText);
+        }
+        addLog("    [!] Lỗi lần " + attempt + "/" + maxAttempts + ": " + errText + ". Thử lại sau 5s...");
+        await sleep(5000);
+        continue;
+      }
+
+      try {
+        var text = data.choices && data.choices[0] && data.choices[0].message ? data.choices[0].message.content : null;
+        if (Array.isArray(text)) { text = text.map(function (c) { return c.text || ""; }).join(""); }
+        text = (text || "").replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
+        var info = JSON.parse(text);
+        if (!MA_HOP_LE.has(info.ma_loai_giay_to)) { info.ma_loai_giay_to = "KHAC"; }
+        return info;
+      } catch (parseErr) {
+        addLog("    [!] Không parse được JSON lần " + attempt + "/" + maxAttempts + ": " + parseErr.message + ". Thử lại sau 5s...");
+        await sleep(5000);
+      }
+    }
+    addLog("    [!] Vẫn lỗi sau nhiều lần thử, tạm gán tiếp nối văn bản trước.");
+    return { is_new_document_start: false, ma_loai_giay_to: prevMa || "KHAC", title: "" };
+  }
+
+  // -------------------------------------------------------------
+  // Gom văn bản + đánh nhãn PL02
+  // -------------------------------------------------------------
+  function groupPagesIntoDocuments(pageInfos) {
+    var docs = [];
+    var current = null;
+    for (var i = 0; i < pageInfos.length; i++) {
+      var info = pageInfos[i];
+      if (info.is_new_document_start || current === null) {
+        if (current !== null) { docs.push(current); }
+        current = {
+          start: i, end: i,
+          ma_loai: info.ma_loai_giay_to || "KHAC",
+          title: info.title || ""
+        };
+      } else {
+        current.end = i;
+        if (!current.title && info.title) { current.title = info.title; }
+      }
+    }
+    if (current !== null) { docs.push(current); }
+    return docs;
+  }
+
+  function ganNhanTheoPL02(documents) {
+    var dem = {};
+    documents.forEach(function (d) { dem[d.ma_loai] = (dem[d.ma_loai] || 0) + 1; });
+    var sttDung = {};
+    var labels = [];
+    documents.forEach(function (d) {
+      var canThem = dem[d.ma_loai] >= 2;
+      var nhan;
+      if (canThem) {
+        sttDung[d.ma_loai] = (sttDung[d.ma_loai] || 0) + 1;
+        nhan = d.ma_loai + "-" + String(sttDung[d.ma_loai]).padStart(2, "0");
+      } else {
+        nhan = d.ma_loai;
+      }
+      labels.push(nhan);
+    });
+    return labels;
+  }
+
+  // -------------------------------------------------------------
+  // CSV
+  // -------------------------------------------------------------
+  function csvCell(v) {
+    v = String(v == null ? "" : v);
+    if (/[",\r\n]/.test(v)) { v = '"' + v.replace(/"/g, '""') + '"'; }
+    return v;
+  }
+  function buildCsv(rows) {
+    var lines = [
+      ["nhan_da_dong_dau", "trang_bat_dau", "trang_ket_thuc", "so_trang", "ma_loai_giay_to", "tieu_de_doc_duoc"].map(csvCell).join(",")
+    ];
+    rows.forEach(function (r) {
+      lines.push([r.nhan, r.start + 1, r.end + 1, r.end - r.start + 1, r.ma_loai, r.title].map(csvCell).join(","));
+    });
+    return "\uFEFF" + lines.join("\r\n");
+  }
+
+  // -------------------------------------------------------------
+  // Chạy chính
+  // -------------------------------------------------------------
+  $("btn_start").addEventListener("click", function () {
+    if (!selectedFile) { showError("Vui lòng chọn file PDF."); return; }
+    hideError();
+    var isCustom = $("label_mode_custom").checked;
+    if (isCustom) {
+      if (!$("custom_text").value.trim()) { showError("Vui lòng nhập văn bản đóng dấu."); return; }
+      if ($("custom_apply").value === "list" && !$("custom_pages").value.trim()) { showError("Vui lòng nhập danh sách trang."); return; }
+      startStampCustom();
+    } else {
+      var apiKey = $("api_key").value.trim();
+      if (!apiKey) { showError("Vui lòng nhập Mistral API key."); return; }
+      if (rememberKeyChk.checked) { try { localStorage.setItem(API_KEY_STORAGE, apiKey); } catch (e) {} }
+      startStamp(apiKey);
+    }
+  });
+
+  async function startStampCustom() {
+    var btn = $("btn_start");
+    btn.disabled = true;
+    hideError();
+    $("result").style.display = "none";
+    $("logbox").style.display = "none";
+    $("logbox").innerHTML = "";
+    $("progress_wrap").style.display = "block";
+    $("bar_fill").style.width = "0%";
+    $("link_log").style.display = "none";
+    setBadge("running", "Đang xử lý...");
+
+    try {
+      var text = $("custom_text").value.trim();
+      var fontSize = parseFloat($("font_size").value) || 15;
+      var marginX = parseFloat($("margin_x").value) || 36;
+      var marginY = parseFloat($("margin_y").value) || 12;
+      var stampColor = hexToRgbComponents($("stamp_color").value);
+
+      var src = await selectedFile.arrayBuffer();
+      var pdfDoc = await PDFLib.PDFDocument.load(src);
+      var total = pdfDoc.getPageCount();
+      addLog("Tổng số trang: " + total);
+
+      var applyMode = $("custom_apply").value;
+      var targetPages;
+      if (applyMode === "first") {
+        targetPages = [0];
+      } else if (applyMode === "all") {
+        targetPages = [];
+        for (var i = 0; i < total; i++) { targetPages.push(i); }
+      } else {
+        targetPages = parsePageList($("custom_pages").value, total);
+        if (!targetPages.length) { throw new Error("Danh sách trang không hợp lệ hoặc nằm ngoài phạm vi file (file có " + total + " trang)."); }
+      }
+
+      $("progress_text").textContent = "0/" + targetPages.length + " trang";
+
+      for (var k = 0; k < targetPages.length; k++) {
+        var pIdx = targetPages[k];
+        var p = pdfDoc.getPage(pIdx);
+        var height = p.getHeight();
+        addFreeTextAnnotation(pdfDoc, p, {
+          x: marginX,
+          yTop: height - marginY,
+          text: text,
+          fontSize: fontSize,
+          color: stampColor
+        });
+        $("bar_fill").style.width = Math.round((k + 1) / targetPages.length * 100) + "%";
+        $("progress_text").textContent = (k + 1) + "/" + targetPages.length + " trang";
+        addLog("  -> Trang " + (pIdx + 1) + ": đóng dấu (chú thích có thể sửa) \"" + text + "\"");
+      }
+
+      var bytes = await pdfDoc.save();
+      var pdfBlob = new Blob([bytes], { type: "application/pdf" });
+      var pdfUrl = URL.createObjectURL(pdfBlob);
+      $("link_pdf").href = pdfUrl;
+      $("link_pdf").download = "da_danh_dau.pdf";
+
+      $("phase_text").textContent = "";
+      setBadge("done", "Hoàn tất");
+      $("result").style.display = "block";
+      addLog("");
+      addLog("Xong. Đã đóng dấu " + targetPages.length + " trang với nội dung tự nhập.");
+    } catch (e) {
+      setBadge("error", "Lỗi");
+      showError(e.message || String(e));
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function startStamp(apiKey) {
+    var btn = $("btn_start");
+    btn.disabled = true;
+    hideError();
+    $("result").style.display = "none";
+    $("logbox").style.display = "none";
+    $("logbox").innerHTML = "";
+    $("progress_wrap").style.display = "block";
+    $("bar_fill").style.width = "0%";
+    $("link_log").style.display = "";
+    setBadge("running", "Đang khởi tạo...");
+
+    try {
+      // Đọc cấu hình tuỳ chỉnh nếu có
+      var cfgText = $("config_text").value.trim();
+      if (cfgText) {
+        var cfg = JSON.parse(cfgText);
+        if (!cfg.danh_muc_loai_giay_to || !cfg.danh_muc_loai_giay_to.length) { throw new Error("Cấu hình không có danh_muc_loai_giay_to."); }
+        var catalog = cfg.danh_muc_loai_giay_to.map(function (x) { return [String(x.ma).trim(), String(x.mo_ta).trim()]; });
+        setCatalog(catalog, cfg.quy_tac_phan_biet || QUY_TAC_PHAN_BIET_MAC_DINH);
+        addLog("[i] Đã nạp " + catalog.length + " mã loại giấy tờ từ cấu hình tuỳ chỉnh.");
+      } else {
+        setCatalog(DANH_MUC_MAC_DINH, QUY_TAC_PHAN_BIET_MAC_DINH);
+        addLog("[i] Dùng danh mục PL02 mặc định (" + DANH_MUC.length + " mã).");
+      }
+
+      var model = currentModel();
+      var delayMs = Math.max(0, parseFloat($("delay").value) || 0) * 1000;
+      var fontSize = parseFloat($("font_size").value) || 15;
+      var marginX = parseFloat($("margin_x").value) || 36;
+      var marginY = parseFloat($("margin_y").value) || 12;
+
+      var src = await selectedFile.arrayBuffer();
+      var renderBuf = src.slice(0);   // cho pdf.js
+      var stampBuf = src.slice(0);    // cho pdf-lib
+
+      var pdf = await pdfjsLib.getDocument({ data: renderBuf }).promise;
+      var total = pdf.numPages;
+      $("progress_text").textContent = "0/" + total + " trang";
+      addLog("Tổng số trang: " + total);
+
+      var pageInfos = [];
+      var prevMa = null;
+      var prevPngB64 = null;
+
+      for (var i = 1; i <= total; i++) {
+        $("progress_text").textContent = i + "/" + total + " trang";
+        $("bar_fill").style.width = Math.round(i / total * 100) + "%";
+        $("phase_text").textContent = "Đang đọc trang " + i + "/" + total;
+        setBadge("running", "Đang xử lý " + i + "/" + total);
+        addLog("  Đang đọc trang " + i + "/" + total + "...");
+
+        var page = await pdf.getPage(i);
+        var viewport = page.getViewport({ scale: 200 / 72 });
+        var canvas = document.createElement("canvas");
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        var ctx = canvas.getContext("2d");
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+        var b64 = canvas.toDataURL("image/png").split(",")[1];
+
+        var info = await askMistralAboutPage(apiKey, model, b64, prevMa, prevPngB64);
+        pageInfos.push(info);
+        prevMa = info.ma_loai_giay_to || prevMa;
+        prevPngB64 = b64;
+
+        if (delayMs > 0 && i < total) { await sleep(delayMs); }
+      }
+
+      var documents = groupPagesIntoDocuments(pageInfos);
+      addLog("");
+      addLog("Phát hiện " + documents.length + " văn bản riêng biệt.");
+
+      var labels = ganNhanTheoPL02(documents);
+
+      // Đóng dấu bằng annotation FreeText (có thể mở & sửa bằng Foxit Typewriter)
+      var pdfDoc = await PDFLib.PDFDocument.load(stampBuf);
+      var stampColor = hexToRgbComponents($("stamp_color").value);
+
+      for (var k = 0; k < documents.length; k++) {
+        var d = documents[k];
+        var p = pdfDoc.getPage(d.start);
+        var height = p.getHeight();
+        addFreeTextAnnotation(pdfDoc, p, {
+          x: marginX,
+          yTop: height - marginY,
+          text: labels[k],
+          fontSize: fontSize,
+          color: stampColor
+        });
+        addLog("  -> Trang " + (d.start + 1) + "-" + (d.end + 1) + " (" + (d.end - d.start + 1) + " trang): đóng dấu (chú thích có thể sửa) \"" + labels[k] + "\"");
+      }
+
+      var bytes = await pdfDoc.save();
+      var pdfBlob = new Blob([bytes], { type: "application/pdf" });
+      var pdfUrl = URL.createObjectURL(pdfBlob);
+      $("link_pdf").href = pdfUrl;
+      $("link_pdf").download = "da_danh_dau.pdf";
+
+      var csvRows = documents.map(function (d, idx) {
+        return { nhan: labels[idx], start: d.start, end: d.end, ma_loai: d.ma_loai, title: d.title };
+      });
+      var csvBlob = new Blob([buildCsv(csvRows)], { type: "text/csv;charset=utf-8" });
+      var csvUrl = URL.createObjectURL(csvBlob);
+      $("link_log").href = csvUrl;
+      $("link_log").download = "da_danh_dau_log_danh_dau.csv";
+
+      $("progress_text").textContent = total + "/" + total + " trang";
+      $("bar_fill").style.width = "100%";
+      $("phase_text").textContent = "";
+      setBadge("done", "Hoàn tất");
+      $("result").style.display = "block";
+      addLog("");
+      addLog("Xong. File đã đánh dấu: da_danh_dau.pdf");
+    } catch (e) {
+      setBadge("error", "Lỗi");
+      showError(e.message || String(e));
+    } finally {
+      btn.disabled = false;
+    }
+  }
+})();
+</script>
+</body>
+</html>
