@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chèn nhãn văn bản vào PDF</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<style>
+  :root{
+    --bg:#f4f5f7;
+    --panel:#ffffff;
+    --border:#dde1e7;
+    --text:#1c2230;
+    --text-dim:#5b6472;
+    --accent:#2f5d8a;
+    --accent-dark:#234668;
+    --accent-soft:#e7eef6;
+    --tag-red:#c0392b;
+    --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    display:flex;
+    flex-direction:column;
+  }
+  header{
+    padding:14px 22px;
+    background:var(--panel);
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:baseline;
+    gap:10px;
+    flex-shrink:0;
+  }
+  header h1{
+    font-size:16px;
+    font-weight:600;
+    margin:0;
+    letter-spacing:.1px;
+  }
+  header p{
+    margin:0;
+    font-size:12.5px;
+    color:var(--text-dim);
+  }
+  .layout{
+    flex:1;
+    display:flex;
+    min-height:0;
+  }
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:270px;
+    flex-shrink:0;
+    background:var(--panel);
+    border-right:1px solid var(--border);
+    display:flex;
+    flex-direction:column;
+    overflow-y:auto;
+  }
+  .sidebar-section{
+    padding:16px 16px 14px;
+    border-bottom:1px solid var(--border);
+  }
+  .sidebar-section h2{
+    font-size:11px;
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    color:var(--text-dim);
+    margin:0 0 10px;
+    font-weight:600;
+  }
+  .tag-list{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .tag-btn{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    text-align:left;
+    padding:9px 10px;
+    border:1px solid var(--border);
+    background:#fbfbfc;
+    border-radius:var(--radius);
+    font-size:13.5px;
+    color:var(--text);
+    cursor:pointer;
+    transition:border-color .12s, background .12s;
+  }
+  .tag-btn:hover:not(:disabled){
+    border-color:var(--accent);
+    background:var(--accent-soft);
+  }
+  .tag-btn:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+  }
+  .tag-swatch{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--tag-red);
+    flex-shrink:0;
+  }
+  .tag-name{
+    font-weight:600;
+    flex:1;
+  }
+  .tag-remove{
+    background:none;
+    border:none;
+    color:var(--text-dim);
+    cursor:pointer;
+    font-size:14px;
+    line-height:1;
+    padding:2px 4px;
+    border-radius:4px;
+  }
+  .tag-remove:hover{
+    background:#f0e4e2;
+    color:var(--tag-red);
+  }
+  .tag-btn.is-inserted{
+    border-color:var(--tag-red);
+    background:#fdf1ef;
+  }
+  .tag-swatch.is-inserted{
+    background:#1f8a4c;
+  }
+  .tag-page-del{
+    background:none;
+    border:none;
+    color:var(--accent);
+    cursor:pointer;
+    font-size:13px;
+    line-height:1;
+    padding:2px 4px;
+    border-radius:4px;
+  }
+  .tag-page-del:hover{
+    background:var(--accent-soft);
+    color:var(--accent-dark);
+  }
+  .add-tag-row{
+    display:flex;
+    gap:6px;
+    margin-top:10px;
+  }
+  .add-tag-row input{
+    flex:1;
+    min-width:0;
+    padding:7px 8px;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    font-size:13px;
+  }
+  .add-tag-row button{
+    padding:7px 10px;
+    border:1px solid var(--accent);
+    background:var(--accent);
+    color:#fff;
+    border-radius:var(--radius);
+    font-size:13px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .add-tag-row button:hover{ background:var(--accent-dark); }
+
+  .config-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:8px 10px;
+    font-size:12.5px;
+  }
+  .config-item{
+    background:#fbfbfc;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:7px 9px;
+  }
+  .config-item label{
+    display:block;
+    color:var(--text-dim);
+    font-size:10.5px;
+    text-transform:uppercase;
+    letter-spacing:.04em;
+    margin-bottom:3px;
+  }
+  .config-item input{
+    width:100%;
+    border:none;
+    background:transparent;
+    font-size:13px;
+    font-weight:600;
+    color:var(--text);
+    padding:0;
+  }
+  .config-item input:focus{ outline:none; }
+
+  .history-list{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    max-height:220px;
+    overflow-y:auto;
+  }
+  .history-empty{
+    font-size:12.5px;
+    color:var(--text-dim);
+    font-style:italic;
+  }
+  .history-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:12.5px;
+    padding:6px 8px;
+    background:#fbfbfc;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+  }
+  .history-item .h-tag{
+    font-weight:700;
+    color:var(--tag-red);
+  }
+  .history-item .h-page{
+    color:var(--text-dim);
+    flex:1;
+  }
+  .history-item button{
+    border:none;
+    background:none;
+    color:var(--text-dim);
+    cursor:pointer;
+    font-size:13px;
+  }
+  .history-item button:hover{ color:var(--tag-red); }
+
+  /* ---------- MAIN / PREVIEW ---------- */
+  .main{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  .toolbar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 18px;
+    background:var(--panel);
+    border-bottom:1px solid var(--border);
+    flex-wrap:wrap;
+  }
+  .btn{
+    padding:7px 13px;
+    border-radius:var(--radius);
+    border:1px solid var(--border);
+    background:#fff;
+    font-size:13px;
+    color:var(--text);
+    cursor:pointer;
+  }
+  .btn:hover:not(:disabled){ border-color:var(--accent); color:var(--accent-dark); }
+  .btn:disabled{ opacity:.4; cursor:not-allowed; }
+  .btn-primary{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#fff;
+  }
+  .btn-primary:hover:not(:disabled){ background:var(--accent-dark); color:#fff; }
+  #fileInput{ display:none; }
+  .page-nav{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-left:auto;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .page-nav input{
+    width:46px;
+    text-align:center;
+    padding:5px;
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    font-size:13px;
+  }
+  .spacer-line{
+    width:1px;height:22px;background:var(--border);
+  }
+
+  .preview-wrap{
+    flex:1;
+    overflow:auto;
+    display:flex;
+    justify-content:center;
+    padding:26px;
+  }
+  .canvas-shell{
+    background:#fff;
+    box-shadow:0 1px 3px rgba(20,25,35,.12), 0 8px 24px rgba(20,25,35,.06);
+    height:fit-content;
+  }
+  canvas{ display:block; }
+
+  .empty-state{
+    margin:auto;
+    text-align:center;
+    color:var(--text-dim);
+    max-width:320px;
+  }
+  .empty-state .icon{
+    font-size:34px;
+    margin-bottom:10px;
+  }
+  .empty-state h3{
+    margin:0 0 6px;
+    color:var(--text);
+    font-size:15px;
+  }
+  .empty-state p{ margin:0; font-size:13px; line-height:1.5;}
+
+  .status-msg{
+    font-size:12.5px;
+    color:var(--text-dim);
+    padding:0 18px 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Chèn nhãn văn bản vào PDF</h1>
+  <p>— dạng FreeText annotation, chèn vào góc trên-trái trang đang xem</p>
+</header>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <h2>Danh mục nhãn</h2>
+      <div class="tag-list" id="tagList"></div>
+      <div class="add-tag-row">
+        <input type="text" id="newTagInput" placeholder="Thêm nhãn mới…" maxlength="20">
+        <button id="addTagBtn" type="button">Thêm</button>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h2>Định dạng chèn</h2>
+      <div class="config-grid">
+        <div class="config-item">
+          <label>Cỡ chữ</label>
+          <input type="number" id="cfgFontSize" value="13" min="6" max="72">
+        </div>
+        <div class="config-item">
+          <label>Màu chữ</label>
+          <input type="color" id="cfgColor" value="#ff0000" style="height:20px;padding:0;cursor:pointer;">
+        </div>
+        <div class="config-item">
+          <label>Mép trên (pt)</label>
+          <input type="number" id="cfgTop" value="15" min="0">
+        </div>
+        <div class="config-item">
+          <label>Mép trái (pt)</label>
+          <input type="number" id="cfgLeft" value="12" min="0">
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section" style="flex:1;">
+      <h2>Nhãn đã chèn</h2>
+      <div class="history-list" id="historyList">
+        <div class="history-empty">Chưa có nhãn nào được chèn.</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="toolbar">
+      <button class="btn btn-primary" id="chooseFileBtn" type="button">Chọn file PDF</button>
+      <input type="file" id="fileInput" accept="application/pdf">
+      <span class="spacer-line"></span>
+      <button class="btn" id="downloadBtn" type="button" disabled>Tải PDF về</button>
+
+      <div class="page-nav" id="pageNav" style="display:none;">
+        <button class="btn" id="prevBtn" type="button">‹</button>
+        <span>Trang</span>
+        <input type="number" id="pageInput" min="1" value="1">
+        <span>/ <span id="pageCount">1</span></span>
+        <button class="btn" id="nextBtn" type="button">›</button>
+        <span style="color:var(--text-dim); font-size:12px; margin-left:4px;">(cuộn chuột trên trang để lật)</span>
+      </div>
+    </div>
+    <div class="status-msg" id="statusMsg"></div>
+
+    <div class="preview-wrap" id="previewWrap">
+      <div class="empty-state" id="emptyState">
+        <div class="icon">📄</div>
+        <h3>Chưa có file PDF</h3>
+        <p>Bấm "Chọn file PDF" để tải tài liệu lên, sau đó bấm vào một nhãn bên trái để chèn vào trang đang xem.</p>
+      </div>
+      <div class="canvas-shell" id="canvasShell" style="display:none;">
+        <canvas id="pdfCanvas"></canvas>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+const { PDFDocument, StandardFonts, PDFName, PDFString, PDFArray, PDFRawStream } = PDFLib;
+
+// ---------- state ----------
+const tagDescriptions = {
+  QDTUYENDUNG: "Quyết định tuyển dụng lao động thử việc và các quyết định tiếp theo trong cùng chuỗi tuyển dụng (kể cả QĐ chấm dứt thử việc để ký HĐLĐ tiếp theo).",
+  THONGBAOLUONG: "Thông báo lương / thông báo kết quả xếp lương, tăng lương.",
+  SOYEULYLICH: "Sơ yếu lý lịch do cán bộ tự khai, có xác nhận của cơ quan nhà nước có thẩm quyền.",
+  GIAYKHAISINH: "Bản sao Giấy khai sinh có chứng thực của cơ quan có thẩm quyền.",
+  CCCD: "Bản sao Căn cước công dân/Căn cước có chứng thực của cơ quan có thẩm quyền.",
+  CMND: "Bản sao Chứng minh nhân dân (mẫu cũ) có chứng thực của cơ quan có thẩm quyền.",
+  HOCHIEU: "Bản sao hộ chiếu có chứng thực của cơ quan có thẩm quyền.",
+  DINHDANH: "Bản sao mã định danh điện tử/thông báo định danh cá nhân có chứng thực của cơ quan có thẩm quyền.",
+  BANGDAIHOC: "Bằng đại học / bằng cử nhân.",
+  BANGDIEMDH: "Bảng điểm đại học.",
+  BANGTIENSI: "Bằng tiến sĩ.",
+  BANGTHACSI: "Bằng thạc sĩ.",
+  CHUNGCHIKHAC: "Chứng chỉ khác, bằng cấp khác không thuộc các mã trên (ngoại ngữ, tin học, nghiệp vụ...).",
+  GIAYKHAMSK: "Giấy khám sức khỏe (mẫu cơ sở y tế/bệnh viện).",
+  CV: "Hồ sơ/thông tin ứng viên nộp khi ứng tuyển (mẫu nội bộ).",
+  QDCHAMDUT: "Quyết định chấm dứt hợp đồng lao động / cho thôi việc hẳn (không dùng cho kết thúc thử việc).",
+  CAMKETBAOMAT: "Cam kết/Hợp đồng bảo mật thông tin.",
+  CAMKETKHAC: "Bản cam kết khác không phải bảo mật thông tin.",
+  HDTHUVIEC: "Hợp đồng thử việc.",
+  HDXDTH: "Hợp đồng lao động xác định thời hạn.",
+  HDKXDTH: "Hợp đồng lao động không xác định thời hạn.",
+  PHULUCHD: "Phụ lục hợp đồng lao động.",
+  HDDAOTAO: "Hợp đồng đào tạo / cam kết đào tạo.",
+  QDDIEUDONG: "Quyết định điều động / chuyển đổi vị trí, đơn vị công tác.",
+  QDBONHIEM: "Quyết định bổ nhiệm chức danh quản lý / điều động kèm bổ nhiệm.",
+  QDTAMHOAN: "Quyết định tạm hoãn thực hiện hợp đồng lao động.",
+  QDDIEUCHINH: "Quyết định điều chỉnh cấp bậc, ngạch/bậc lương, chức danh công việc.",
+  QDNGHIHUU: "Quyết định nghỉ hưu.",
+  QDKYLUAT: "Quyết định/biên bản xử lý kỷ luật lao động.",
+  KEKHAITS: "Bản kê khai tài sản, thu nhập.",
+};
+
+let tags = Object.keys(tagDescriptions).sort((a, b) => a.localeCompare(b));
+let originalPdfBytes = null;   // pristine upload, never mutated
+let currentPdfBytes = null;    // originalPdfBytes + all baked-in annotations
+let pdfProxy = null;           // pdf.js document proxy (for rendering)
+let currentPage = 1;
+let numPages = 1;
+let insertedAnnotations = [];  // {id, tag, page}
+let annotationSeq = 1;
+let isBusy = false;
+
+// ---------- element refs ----------
+const tagListEl = document.getElementById('tagList');
+const newTagInput = document.getElementById('newTagInput');
+const addTagBtn = document.getElementById('addTagBtn');
+const fileInput = document.getElementById('fileInput');
+const chooseFileBtn = document.getElementById('chooseFileBtn');
+const downloadBtn = document.getElementById('downloadBtn');
+const pageNav = document.getElementById('pageNav');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const pageInput = document.getElementById('pageInput');
+const pageCountEl = document.getElementById('pageCount');
+const statusMsg = document.getElementById('statusMsg');
+const previewWrap = document.getElementById('previewWrap');
+const emptyState = document.getElementById('emptyState');
+const canvasShell = document.getElementById('canvasShell');
+const canvas = document.getElementById('pdfCanvas');
+const ctx = canvas.getContext('2d');
+const historyList = document.getElementById('historyList');
+const cfgFontSize = document.getElementById('cfgFontSize');
+const cfgColor = document.getElementById('cfgColor');
+const cfgTop = document.getElementById('cfgTop');
+const cfgLeft = document.getElementById('cfgLeft');
+
+function setStatus(msg){ statusMsg.textContent = msg || ''; }
+function hexToRgb01(hex){
+  const v = hex.replace('#','');
+  return [parseInt(v.substring(0,2),16)/255, parseInt(v.substring(2,4),16)/255, parseInt(v.substring(4,6),16)/255];
+}
+
+// ---------- tag sidebar ----------
+function renderTags(){
+  tagListEl.innerHTML = '';
+  tags.forEach(tag => {
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.gap = '4px';
+
+    const existingOnPage = pdfProxy ? insertedAnnotations.some(a => a.tag === tag && a.page === currentPage) : false;
+
+    const btn = document.createElement('button');
+    btn.className = 'tag-btn' + (existingOnPage ? ' is-inserted' : '');
+    btn.style.flex = '1';
+    btn.disabled = !pdfProxy || isBusy;
+    btn.innerHTML = '<span class="tag-swatch"></span><span class="tag-name"></span>';
+    btn.querySelector('.tag-name').textContent = tag;
+    if (existingOnPage) btn.querySelector('.tag-swatch').classList.add('is-inserted');
+    const desc = tagDescriptions[tag];
+    const actionHint = existingOnPage
+      ? `Đã chèn trên trang ${currentPage} — bấm để thay thế bằng nhãn mới`
+      : `Chèn vào trang ${currentPage}`;
+    btn.title = desc ? `${desc}\n\n(${actionHint})` : actionHint;
+    btn.addEventListener('click', () => insertTag(tag));
+
+    row.appendChild(btn);
+
+    if (existingOnPage) {
+      const pageDelBtn = document.createElement('button');
+      pageDelBtn.className = 'tag-page-del';
+      pageDelBtn.textContent = '🗑';
+      pageDelBtn.title = `Xóa "${tag}" khỏi trang ${currentPage}`;
+      pageDelBtn.disabled = isBusy;
+      pageDelBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteAnnotationsForTagOnPage(tag, currentPage);
+      });
+      row.appendChild(pageDelBtn);
+    }
+
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'tag-remove';
+    removeBtn.textContent = '×';
+    removeBtn.title = 'Xóa nhãn khỏi danh mục';
+    removeBtn.addEventListener('click', () => {
+      tags = tags.filter(t => t !== tag);
+      renderTags();
+    });
+
+    row.appendChild(removeBtn);
+    tagListEl.appendChild(row);
+  });
+}
+
+addTagBtn.addEventListener('click', () => {
+  const val = newTagInput.value.trim();
+  if (!val) return;
+  if (tags.includes(val)) { newTagInput.value = ''; return; }
+  tags.push(val);
+  tags.sort((a, b) => a.localeCompare(b));
+  newTagInput.value = '';
+  renderTags();
+});
+newTagInput.addEventListener('keydown', e => { if (e.key === 'Enter') addTagBtn.click(); });
+
+renderTags();
+
+// ---------- file loading ----------
+chooseFileBtn.addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', async () => {
+  const file = fileInput.files[0];
+  if (!file) return;
+  setStatus('Đang tải file…');
+  const buf = await file.arrayBuffer();
+  originalPdfBytes = new Uint8Array(buf);
+  currentPdfBytes = originalPdfBytes;
+  insertedAnnotations = [];
+  currentPage = 1;
+  renderHistory();
+  await loadIntoViewer(currentPdfBytes);
+  emptyState.style.display = 'none';
+  canvasShell.style.display = 'block';
+  pageNav.style.display = 'flex';
+  downloadBtn.disabled = false;
+  setStatus('');
+});
+
+async function loadIntoViewer(bytes){
+  const loadingTask = pdfjsLib.getDocument({ data: bytes.slice() });
+  pdfProxy = await loadingTask.promise;
+  numPages = pdfProxy.numPages;
+  pageCountEl.textContent = numPages;
+  if (currentPage > numPages) currentPage = numPages;
+  pageInput.value = currentPage;
+  pageInput.max = numPages;
+  renderTags();
+  await renderPage(currentPage);
+}
+
+// ---------- rendering ----------
+async function renderPage(num){
+  const page = await pdfProxy.getPage(num);
+  const containerWidth = Math.min(previewWrap.clientWidth - 52, 900);
+  const baseViewport = page.getViewport({ scale: 1 });
+  const scale = Math.max(0.5, containerWidth / baseViewport.width);
+  const viewport = page.getViewport({ scale });
+
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+
+  await page.render({ canvasContext: ctx, viewport }).promise;
+  drawOverlay(num, viewport);
+}
+
+// Draws a lightweight visual indicator matching the baked-in annotations for
+// the current page, so the preview reflects what was inserted (in addition to
+// the real appearance stream already baked into the PDF bytes).
+function drawOverlay(pageNum, viewport){
+  const scale = viewport.scale;
+  const fontSize = parseFloat(cfgFontSize.value) || 13;
+  const color = cfgColor.value || '#ff0000';
+  ctx.save();
+  ctx.font = `600 ${fontSize * scale}px -apple-system, "Segoe UI", Arial, sans-serif`;
+  ctx.fillStyle = color;
+  ctx.textBaseline = 'alphabetic';
+  insertedAnnotations
+    .filter(a => a.page === pageNum)
+    .forEach(a => {
+      const x = a.leftMargin * scale + 4 * scale;
+      const yBaseline = a.topMargin * scale + a.boxHeight * scale - 5 * scale;
+      ctx.fillText(a.tag, x, yBaseline);
+    });
+  ctx.restore();
+}
+
+// ---------- page navigation ----------
+prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+pageInput.addEventListener('change', () => goToPage(parseInt(pageInput.value, 10) || 1));
+
+async function goToPage(n){
+  if (!pdfProxy) return;
+  n = Math.max(1, Math.min(numPages, n));
+  currentPage = n;
+  pageInput.value = n;
+  renderTags();
+  await renderPage(n);
+}
+
+// ---------- inserting annotations ----------
+async function insertTag(tag){
+  if (!originalPdfBytes || isBusy) return;
+  isBusy = true;
+  renderTags();
+
+  const previousList = insertedAnnotations.slice();
+  const hasExisting = insertedAnnotations.some(a => a.tag === tag && a.page === currentPage);
+  setStatus(hasExisting
+    ? `Đang thay thế "${tag}" trên trang ${currentPage}…`
+    : `Đang chèn "${tag}" vào trang ${currentPage}…`);
+
+  try {
+    // Replace, don't stack: drop any existing instance of this same tag on
+    // this page before adding the fresh one.
+    insertedAnnotations = insertedAnnotations.filter(a => !(a.tag === tag && a.page === currentPage));
+    insertedAnnotations.push({
+      id: annotationSeq++,
+      tag,
+      page: currentPage,
+      fontSize: parseFloat(cfgFontSize.value) || 13,
+      color: cfgColor.value || '#ff0000',
+      topMargin: parseFloat(cfgTop.value) || 15,
+      leftMargin: parseFloat(cfgLeft.value) || 12,
+    });
+    await rebuildPdf();
+    await loadIntoViewer(currentPdfBytes);
+    renderHistory();
+    setStatus('');
+  } catch (err) {
+    console.error(err);
+    insertedAnnotations = previousList;
+    setStatus('Có lỗi khi chèn nhãn: ' + err.message);
+  } finally {
+    isBusy = false;
+    renderTags();
+  }
+}
+
+async function deleteAnnotationsForTagOnPage(tag, page){
+  if (isBusy) return;
+  const hasAny = insertedAnnotations.some(a => a.tag === tag && a.page === page);
+  if (!hasAny) return;
+  isBusy = true;
+  renderTags();
+  const previousList = insertedAnnotations.slice();
+  setStatus(`Đang xóa "${tag}" khỏi trang ${page}…`);
+  try {
+    insertedAnnotations = insertedAnnotations.filter(a => !(a.tag === tag && a.page === page));
+    await rebuildPdf();
+    await loadIntoViewer(currentPdfBytes);
+    renderHistory();
+    setStatus('');
+  } catch (err) {
+    console.error(err);
+    insertedAnnotations = previousList;
+    setStatus('Có lỗi khi xóa nhãn: ' + err.message);
+  } finally {
+    isBusy = false;
+    renderTags();
+  }
+}
+
+function removeAnnotation(id){
+  insertedAnnotations = insertedAnnotations.filter(a => a.id !== id);
+  rebuildPdf().then(() => loadIntoViewer(currentPdfBytes)).then(renderHistory);
+}
+
+// Rebuilds currentPdfBytes = originalPdfBytes + every entry in insertedAnnotations,
+// each as a real FreeText annotation (with a generated appearance stream so it
+// renders correctly in any PDF viewer, not just this app).
+async function rebuildPdf(){
+  const pdfDoc = await PDFDocument.load(originalPdfBytes.slice());
+  const font = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const pages = pdfDoc.getPages();
+  const context = pdfDoc.context;
+
+  for (const ann of insertedAnnotations) {
+    const page = pages[ann.page - 1];
+    if (!page) continue;
+    addFreeTextAnnotation(context, page, font, ann);
+  }
+
+  currentPdfBytes = await pdfDoc.save();
+}
+
+function makeStream(context, contentStr, dict){
+  const bytes = new TextEncoder().encode(contentStr);
+  if (typeof context.flateStream === 'function') {
+    return context.flateStream(bytes, dict);
+  }
+  return PDFRawStream.of(context.obj(dict), bytes);
+}
+
+function getOrCreateAnnots(context, page){
+  if (typeof page.node.Annots === 'function') {
+    let annots = page.node.Annots();
+    if (annots) return annots;
+  }
+  const raw = page.node.get ? page.node.get(PDFName.of('Annots')) : undefined;
+  if (raw) {
+    try { return context.lookup(raw, PDFArray); } catch (e) { /* fall through */ }
+  }
+  const created = context.obj([]);
+  page.node.set(PDFName.of('Annots'), created);
+  return created;
+}
+
+function addFreeTextAnnotation(context, page, font, ann){
+  const { tag, fontSize, color, topMargin, leftMargin, boxWidth, boxHeight } = withComputedBox(font, ann);
+  const pageHeight = page.getHeight();
+  const [r, g, b] = hexToRgb01(color);
+
+  const x1 = leftMargin;
+  const x2 = leftMargin + boxWidth;
+  const y2 = pageHeight - topMargin;
+  const y1 = y2 - boxHeight;
+
+  const escaped = tag.replace(/\\/g, '\\\\').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+  const streamContent =
+    `q\n${r} ${g} ${b} rg\nBT\n/Helv ${fontSize} Tf\n4 5 Td\n(${escaped}) Tj\nET\nQ`;
+
+  const resources = context.obj({ Font: { Helv: font.ref } });
+  const apStream = makeStream(context, streamContent, {
+    Type: 'XObject',
+    Subtype: 'Form',
+    FormType: 1,
+    BBox: [0, 0, boxWidth, boxHeight],
+    Resources: resources,
+  });
+  const apStreamRef = context.register(apStream);
+
+  const annotDict = context.obj({
+    Type: 'Annot',
+    Subtype: 'FreeText',
+    Rect: [x1, y1, x2, y2],
+    Contents: PDFString.of(tag),
+    DA: PDFString.of(`${r} ${g} ${b} rg /Helv ${fontSize} Tf`),
+    C: [r, g, b],
+    Border: [0, 0, 0],
+    F: 4,
+    AP: context.obj({ N: apStreamRef }),
+  });
+  const annotRef = context.register(annotDict);
+
+  const annots = getOrCreateAnnots(context, page);
+  annots.push(annotRef);
+
+  // stash computed box back onto the entry so the on-screen overlay matches exactly
+  ann.boxWidth = boxWidth;
+  ann.boxHeight = boxHeight;
+}
+
+function withComputedBox(font, ann){
+  const paddingX = 4, paddingY = 5;
+  const textWidth = font.widthOfTextAtSize(ann.tag, ann.fontSize);
+  const boxWidth = textWidth + paddingX * 2;
+  const boxHeight = ann.fontSize + paddingY * 2;
+  ann.boxWidth = boxWidth;
+  ann.boxHeight = boxHeight;
+  return ann;
+}
+
+// ---------- history panel ----------
+function renderHistory(){
+  historyList.innerHTML = '';
+  if (insertedAnnotations.length === 0) {
+    historyList.innerHTML = '<div class="history-empty">Chưa có nhãn nào được chèn.</div>';
+    return;
+  }
+  insertedAnnotations.forEach(a => {
+    const row = document.createElement('div');
+    row.className = 'history-item';
+    row.innerHTML =
+      `<span class="h-tag"></span><span class="h-page">trang ${a.page}</span><button title="Xóa">×</button>`;
+    row.querySelector('.h-tag').textContent = a.tag;
+    row.querySelector('button').addEventListener('click', () => removeAnnotation(a.id));
+    historyList.appendChild(row);
+  });
+}
+
+// ---------- download ----------
+downloadBtn.addEventListener('click', () => {
+  if (!currentPdfBytes) return;
+  const blob = new Blob([currentPdfBytes], { type: 'application/pdf' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ket-qua-da-chen-nhan.pdf';
+  a.click();
+  URL.revokeObjectURL(url);
+});
+
+// re-render on resize for a crisp fit-to-width preview
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { if (pdfProxy) renderPage(currentPage); }, 150);
+});
+
+// ---------- scroll-wheel page navigation ----------
+// Scrolling the mouse wheel over the preview flips pages instead of scrolling
+// the (usually non-overflowing) container, so users don't have to click ‹ / ›.
+let wheelAccum = 0;
+let wheelCooldown = false;
+const WHEEL_THRESHOLD = 60;
+
+previewWrap.addEventListener('wheel', (e) => {
+  if (!pdfProxy) return;
+  e.preventDefault();
+  if (wheelCooldown) return;
+
+  wheelAccum += e.deltaY;
+  if (Math.abs(wheelAccum) < WHEEL_THRESHOLD) return;
+
+  const direction = wheelAccum > 0 ? 1 : -1;
+  wheelAccum = 0;
+
+  const next = currentPage + direction;
+  if (next < 1 || next > numPages) return;
+
+  wheelCooldown = true;
+  goToPage(next).finally(() => {
+    setTimeout(() => { wheelCooldown = false; }, 220);
+  });
+}, { passive: false });
+</script>
+</body>
+</html>
