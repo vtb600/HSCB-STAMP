@@ -67,6 +67,7 @@
     <div class="tab-bar">
         <button class="tab-btn active" data-tab="hscb">HSCB</button>
         <button class="tab-btn" data-tab="stamp">Stamp Manual</button>
+        <button class="tab-btn" data-tab="stamp-mistral">Stamp Mistral</button>
     </div>
 
     <div class="tab-content active" id="hscb">
@@ -75,7 +76,9 @@
     <div class="tab-content" id="stamp">
         <iframe src="stamp-manual.html"></iframe>
     </div>
-
+    <div class="tab-content" id="stamp-mistral">
+        <iframe src="stamp-mistral.html"></iframe>
+    </div>
     <script>
         document.querySelectorAll('.tab-btn').forEach(function (btn) {
             btn.addEventListener('click', function () {
